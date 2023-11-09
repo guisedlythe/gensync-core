@@ -7,6 +7,7 @@
  * Created on June 27, 2018, 9:37 AM
  */
 
+#include "GenSync/Benchmarks/BenchParams.h"
 #include <GenSync/Syncs/FullSync.h>
 
 FullSync::FullSync() = default;
@@ -146,4 +147,19 @@ bool FullSync::delElem(shared_ptr<DataObject> newDatum){
     myData.erase(newDatum);
     Logger::gLog(Logger::METHOD, "Successfully removed shared_ptr<DataObject> {" + newDatum->print() + "}");
     return true;
+}
+
+std::shared_ptr<Params> FullSync::getParams() const {
+    return std::make_shared<FullSyncParams>();
+}
+
+std::shared_ptr<Params> FullSyncProtocol::readParams(std::istream &is) const {
+    auto par = make_shared<FullSyncParams>();
+    is >> *par;
+    return par;
+}
+
+std::shared_ptr<SyncMethod>
+FullSyncProtocol::makeSyncMethod(const SyncParameters &syncParams) const {
+    return std::make_shared<FullSync>();
 }

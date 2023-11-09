@@ -6,6 +6,7 @@
 #include "IBLTSetOfSetsTest.h"
 #include <GenSync/Syncs/GenSync.h>
 #include <GenSync/Syncs/IBLTSetOfSets.h>
+#include <memory>
 #include "TestAuxiliary.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(IBLTSetOfSetsTest);
@@ -36,7 +37,7 @@ void IBLTSetOfSetsTest::IBLTSetOfSetsSetReconcileTest()
     for(int ii = 0; ii < NUM_TESTS ; ii++){
         const long NUM_EXP_ELEMS_CHILD_SET = (rand()% 10 + 1); //This is the number of sets
         GenSync GenSyncServer = GenSync::Builder()
-				.setProtocol(GenSync::SyncProtocol::IBLTSetOfSets)
+				.setProtocol(std::make_shared<IBLTSetOfSetsProtocol>())
 				.setComm(GenSync::SyncComm::socket)
 				.setBits(BITS)
 				.setExpNumElems(NUM_EXP_ELEMS)
@@ -44,7 +45,7 @@ void IBLTSetOfSetsTest::IBLTSetOfSetsSetReconcileTest()
                 .build();
 
         GenSync GenSyncClient = GenSync::Builder()
-				.setProtocol(GenSync::SyncProtocol::IBLTSetOfSets)
+				.setProtocol(std::make_shared<IBLTSetOfSetsProtocol>())
 				.setComm(GenSync::SyncComm::socket)
 				.setBits(BITS)
 				.setExpNumElems(NUM_EXP_ELEMS)
@@ -63,7 +64,7 @@ void IBLTSetOfSetsTest::IBLTSetOfSetsLargeSync() {
 		const long NUM_EXP_ELEMS_CHILD_SET = (rand()%30 + 1); //This is the number of sets
 
 		GenSync GenSyncServer = GenSync::Builder()
-				.setProtocol(GenSync::SyncProtocol::IBLTSetOfSets)
+				.setProtocol(std::make_shared<IBLTSetOfSetsProtocol>())
 				.setComm(GenSync::SyncComm::socket)
 				.setBits(BITS)
 				.setExpNumElems(NUM_EXP_ELEMS)
@@ -71,7 +72,7 @@ void IBLTSetOfSetsTest::IBLTSetOfSetsLargeSync() {
 				.build();
 
 		GenSync GenSyncClient = GenSync::Builder()
-				.setProtocol(GenSync::SyncProtocol::IBLTSetOfSets)
+				.setProtocol(std::make_shared<IBLTSetOfSetsProtocol>())
 				.setComm(GenSync::SyncComm::socket)
 				.setBits(BITS)
 				.setExpNumElems(NUM_EXP_ELEMS)
@@ -89,7 +90,7 @@ void IBLTSetOfSetsTest::IBLTSetOfSetsSimilarSetSync() {
 	for(int ii = 0; ii < NUM_TESTS ; ii++){
 		const long NUM_EXP_ELEMS_CHILD_SET = (rand()% 10 + 1); //This is the number of sets
 		GenSync GenSyncServer = GenSync::Builder()
-				.setProtocol(GenSync::SyncProtocol::IBLTSetOfSets)
+				.setProtocol(std::make_shared<IBLTSetOfSetsProtocol>())
 				.setComm(GenSync::SyncComm::socket)
 				.setBits(BITS)
 				.setExpNumElems(NUM_EXP_ELEMS)
@@ -97,7 +98,7 @@ void IBLTSetOfSetsTest::IBLTSetOfSetsSimilarSetSync() {
 				.build();
 
 		GenSync GenSyncClient = GenSync::Builder()
-				.setProtocol(GenSync::SyncProtocol::IBLTSetOfSets)
+				.setProtocol(std::make_shared<IBLTSetOfSetsProtocol>())
 				.setComm(GenSync::SyncComm::socket)
 				.setBits(BITS)
 				.setExpNumElems(NUM_EXP_ELEMS)

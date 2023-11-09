@@ -17,6 +17,7 @@
 #include <GenSync/Aux/SyncMethod.h>
 #include <GenSync/Aux/Auxiliary.h>
 #include <GenSync/Syncs/IBLT.h>
+#include <GenSync/Syncs/SyncProtocol.h>
 
 class IBLTSync : public SyncMethod {
 public:
@@ -33,6 +34,7 @@ public:
     bool SyncServer(const shared_ptr<Communicant>& commSync, list<shared_ptr<DataObject>> &selfMinusOther, list<shared_ptr<DataObject>> &otherMinusSelf) override;
     bool addElem(shared_ptr<DataObject> datum) override;
     bool delElem(shared_ptr<DataObject> datum) override;
+    std::shared_ptr<Params> getParams() const override;
 
     string getName() override;
 
@@ -51,6 +53,16 @@ private:
 
     // Size of elements as set in the constructor
     size_t elementSize;
+};
+
+class IBLTSyncProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "IBLTSync"; }
+
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
 };
 
 

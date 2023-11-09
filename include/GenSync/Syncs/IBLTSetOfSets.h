@@ -19,6 +19,7 @@
 #include <GenSync/Aux/SyncMethod.h>
 #include <GenSync/Aux/Auxiliary.h>
 #include <GenSync/Syncs/IBLT.h>
+#include <GenSync/Syncs/SyncProtocol.h>
 #include <NTL/ZZ.h>
 
 class IBLTSetOfSets : public SyncMethod
@@ -53,6 +54,17 @@ public:
   shared_ptr<DataObject> reWrite(long index, list<shared_ptr<DataObject>> elems);
   string getName() override;
 
+
+  std::shared_ptr<Params> getParams() const override;
+
+  virtual void
+  postProcess(std::list<std::shared_ptr<DataObject>> otherMinusSelf,
+              std::list<std::shared_ptr<DataObject>> myData,
+              void (GenSync::*add)(std::shared_ptr<DataObject>),
+              bool (GenSync::*del)(std::shared_ptr<DataObject>),
+              GenSync *pGenSync) const override {
+      postProcessing_IBLTSetOfSets(otherMinusSelf, myData, add, del, pGenSync);
+  }
 
   /** Add the new child sets with missing elements added, and remove the old one by index
    *      in the decreasing order, which won't influence the following content to be deleted
@@ -131,6 +143,16 @@ private:
   size_t childSize;
   // instance variable to store the size for elements in the child set
   size_t elemSize;
+};
+
+class IBLTSetOfSetsProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "IBLTSetOfSets"; }
+
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
 };
 
 #endif //GENSYNCLIB_IBLTSetOfSets_H

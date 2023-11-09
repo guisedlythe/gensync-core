@@ -49,70 +49,71 @@ inline vector<GenSync> builderCombos() {
     vector<GenSync> ret;
 
     // iterate through all possible combinations of communicant and syncmethod
-    for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
-        for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
-            GenSync::Builder builder = GenSync::Builder().
-                    setProtocol(prot).
-                    setComm(comm);
+    // TODO
+    // for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
+    //     for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
+    //         GenSync::Builder builder = GenSync::Builder().
+    //                 setProtocol(prot).
+    //                 setComm(comm);
 
-            switch(prot) {
-                case GenSync::SyncProtocol::CPISync:
-                	builder.
-							setBits(eltSizeSq).
-							setMbar(mBar).
-							setErr(err);
-                	break;
-				case GenSync::SyncProtocol::ProbCPISync:
-					builder.
-							setBits(eltSizeSq).
-							setMbar(mBar).
-							setErr(err);
-					break;
-                case GenSync::SyncProtocol::OneWayCPISync:
-                    builder.
-                            setBits(eltSizeSq).
-                            setMbar(mBar);
-                    break;
-                case GenSync::SyncProtocol::InteractiveCPISync:
-                    builder.
-                            setBits(eltSizeSq).
-                            setMbar(mBar).
-                            setNumPartitions(numParts).
-							setErr(err);
-					break;
-                case GenSync::SyncProtocol::FullSync:
-                    break; // nothing needs to be done for a fullsync
-                case GenSync::SyncProtocol::IBLTSync:
-					builder.
-							setBits(eltSize).
-							setExpNumElems(numExpElem);
-                    break;
-                case GenSync::SyncProtocol::OneWayIBLTSync:
-					builder.
-							setBits(eltSize).
-							setExpNumElems(numExpElem);
-                    break;
-                default:
-                    continue;
-            }
+    //         switch(prot) {
+    //             case GenSync::SyncProtocol::CPISync:
+    //             	builder.
+	// 						setBits(eltSizeSq).
+	// 						setMbar(mBar).
+	// 						setErr(err);
+    //             	break;
+	// 			case GenSync::SyncProtocol::ProbCPISync:
+	// 				builder.
+	// 						setBits(eltSizeSq).
+	// 						setMbar(mBar).
+	// 						setErr(err);
+	// 				break;
+    //             case GenSync::SyncProtocol::OneWayCPISync:
+    //                 builder.
+    //                         setBits(eltSizeSq).
+    //                         setMbar(mBar);
+    //                 break;
+    //             case GenSync::SyncProtocol::InteractiveCPISync:
+    //                 builder.
+    //                         setBits(eltSizeSq).
+    //                         setMbar(mBar).
+    //                         setNumPartitions(numParts).
+	// 						setErr(err);
+	// 				break;
+    //             case GenSync::SyncProtocol::FullSync:
+    //                 break; // nothing needs to be done for a fullsync
+    //             case GenSync::SyncProtocol::IBLTSync:
+	// 				builder.
+	// 						setBits(eltSize).
+	// 						setExpNumElems(numExpElem);
+    //                 break;
+    //             case GenSync::SyncProtocol::OneWayIBLTSync:
+	// 				builder.
+	// 						setBits(eltSize).
+	// 						setExpNumElems(numExpElem);
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            switch(comm) {
-                case GenSync::SyncComm::string:
-                    builder.
-                            setIoStr(iostr);
-                    break;
-                case GenSync::SyncComm::socket:
-                    builder.
-                            setHost(host).
-                            setPort(port);
-                    break;
-                default:
-                    continue;
-            }
+    //         switch(comm) {
+    //             case GenSync::SyncComm::string:
+    //                 builder.
+    //                         setIoStr(iostr);
+    //                 break;
+    //             case GenSync::SyncComm::socket:
+    //                 builder.
+    //                         setHost(host).
+    //                         setPort(port);
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            ret.emplace_back(GenSync(builder.build()));
-        }
-    }
+    //         ret.emplace_back(GenSync(builder.build()));
+    //     }
+    // }
     return ret;
 }
 
@@ -127,51 +128,52 @@ inline vector<GenSync> constructorCombos(bool useFile) {
     vector<GenSync> ret;
 
     // iterate through all possible combinations of communicant and syncmethod
-    for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
-        for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
-            vector<shared_ptr<Communicant>> communicants;
-            vector<shared_ptr<SyncMethod>> methods;
-            switch(prot) {
-                case GenSync::SyncProtocol::CPISync:
-                    methods = {make_shared<CPISync>(mBar, eltSizeSq, err)};
-                    break;
-				case GenSync::SyncProtocol::ProbCPISync:
-					methods = {make_shared<ProbCPISync>(mBar, eltSizeSq, err)};
-					break;
-				case GenSync::SyncProtocol::InteractiveCPISync:
-					methods = {make_shared<InterCPISync>(mBar, eltSizeSq, err, numParts)};
-					break;
-                case GenSync::SyncProtocol::OneWayCPISync:
-                    methods = {make_shared<CPISync_HalfRound>(mBar, eltSizeSq, err)};
-					break;
-                case GenSync::SyncProtocol::FullSync:
-                    methods = {make_shared<FullSync>()};
-					break;
-                case GenSync::SyncProtocol::IBLTSync:
-                    methods = {make_shared<IBLTSync>(numExpElem, eltSize)};
-					break;
-                case GenSync::SyncProtocol::OneWayIBLTSync:
-                    methods = {make_shared<IBLTSync_HalfRound>(numExpElem, eltSize)};
-					break;
-                default:
-                    continue;
-            }
+    // TODO
+    // for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
+    //     for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
+    //         vector<shared_ptr<Communicant>> communicants;
+    //         vector<shared_ptr<SyncMethod>> methods;
+    //         switch(prot) {
+    //             case GenSync::SyncProtocol::CPISync:
+    //                 methods = {make_shared<CPISync>(mBar, eltSizeSq, err)};
+    //                 break;
+	// 			case GenSync::SyncProtocol::ProbCPISync:
+	// 				methods = {make_shared<ProbCPISync>(mBar, eltSizeSq, err)};
+	// 				break;
+	// 			case GenSync::SyncProtocol::InteractiveCPISync:
+	// 				methods = {make_shared<InterCPISync>(mBar, eltSizeSq, err, numParts)};
+	// 				break;
+    //             case GenSync::SyncProtocol::OneWayCPISync:
+    //                 methods = {make_shared<CPISync_HalfRound>(mBar, eltSizeSq, err)};
+	// 				break;
+    //             case GenSync::SyncProtocol::FullSync:
+    //                 methods = {make_shared<FullSync>()};
+	// 				break;
+    //             case GenSync::SyncProtocol::IBLTSync:
+    //                 methods = {make_shared<IBLTSync>(numExpElem, eltSize)};
+	// 				break;
+    //             case GenSync::SyncProtocol::OneWayIBLTSync:
+    //                 methods = {make_shared<IBLTSync_HalfRound>(numExpElem, eltSize)};
+	// 				break;
+    //             default:
+    //                 continue;
+    //         }
 
-            switch(comm) {
-                case GenSync::SyncComm::string:
-                    communicants = {make_shared<CommString>(iostr, b64)};
-                    break;
-                case GenSync::SyncComm::socket:
-                    communicants = {make_shared<CommSocket>(port, host)};
-                    break;
-                default:
-                    continue;
-            }
+    //         switch(comm) {
+    //             case GenSync::SyncComm::string:
+    //                 communicants = {make_shared<CommString>(iostr, b64)};
+    //                 break;
+    //             case GenSync::SyncComm::socket:
+    //                 communicants = {make_shared<CommSocket>(port, host)};
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            // call constructor depending on useFile
-            ret.emplace_back(useFile ? GenSync(communicants, methods, temporaryDir() + "/gensynctest/" + toStr(rand())) : GenSync(communicants, methods));
-        }
-    }
+    //         // call constructor depending on useFile
+    //         ret.emplace_back(useFile ? GenSync(communicants, methods, temporaryDir() + "/gensynctest/" + toStr(rand())) : GenSync(communicants, methods));
+    //     }
+    // }
     return ret;
 }
 
@@ -184,28 +186,29 @@ inline vector<GenSync> oneWayCombos() {
     vector<GenSync> ret;
 
     // iterate through all possible combinations of communicant and syncmethod
-    for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
-        for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
-            vector<shared_ptr<Communicant>> communicants;
-            vector<shared_ptr<SyncMethod>> methods;
-            switch(prot) {
-                case GenSync::SyncProtocol::OneWayCPISync:
-                    methods = {make_shared<CPISync_HalfRound>(mBar, eltSizeSq, err,0,false)};
-                    break;
-                default:
-                    continue;
-            }
+    // TODO
+    // for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
+    //     for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
+    //         vector<shared_ptr<Communicant>> communicants;
+    //         vector<shared_ptr<SyncMethod>> methods;
+    //         switch(prot) {
+    //             case GenSync::SyncProtocol::OneWayCPISync:
+    //                 methods = {make_shared<CPISync_HalfRound>(mBar, eltSizeSq, err,0,false)};
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            switch(comm) {
-                case GenSync::SyncComm::socket:
-                    communicants = {make_shared<CommSocket>(port, host)};
-                    break;
-                default:
-                    continue;
-            }
-            ret.emplace_back(communicants, methods);
-        }
-    }
+    //         switch(comm) {
+    //             case GenSync::SyncComm::socket:
+    //                 communicants = {make_shared<CommSocket>(port, host)};
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
+    //         ret.emplace_back(communicants, methods);
+    //     }
+    // }
     return ret;
 }
 
@@ -219,38 +222,39 @@ inline vector<GenSync> twoWayCombos(int m_Bar) {
     vector<GenSync> ret;
 
     // iterate through all possible combinations of communicant and syncmethod
-    for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
-        for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
-            vector<shared_ptr<Communicant>> communicants;
-            vector<shared_ptr<SyncMethod>> methods;
-            switch(prot) {
-                case GenSync::SyncProtocol::CPISync:
-                    methods = {make_shared<CPISync>(m_Bar, eltSizeSq, err)};
-                    break;
-                case GenSync::SyncProtocol::InteractiveCPISync:
-                    methods = {make_shared<InterCPISync>(m_Bar, eltSizeSq, err, numParts)};
-                    break;
-                case GenSync::SyncProtocol::ProbCPISync:
-                    methods = {make_shared<ProbCPISync>(m_Bar, eltSizeSq, err)};
-                    break;
-                case GenSync::SyncProtocol::FullSync:
-                    methods = {make_shared<FullSync>()};
-                    break;
-                default:
-                    continue;
-            }
+    // TODO
+    // for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
+    //     for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
+    //         vector<shared_ptr<Communicant>> communicants;
+    //         vector<shared_ptr<SyncMethod>> methods;
+    //         switch(prot) {
+    //             case GenSync::SyncProtocol::CPISync:
+    //                 methods = {make_shared<CPISync>(m_Bar, eltSizeSq, err)};
+    //                 break;
+    //             case GenSync::SyncProtocol::InteractiveCPISync:
+    //                 methods = {make_shared<InterCPISync>(m_Bar, eltSizeSq, err, numParts)};
+    //                 break;
+    //             case GenSync::SyncProtocol::ProbCPISync:
+    //                 methods = {make_shared<ProbCPISync>(m_Bar, eltSizeSq, err)};
+    //                 break;
+    //             case GenSync::SyncProtocol::FullSync:
+    //                 methods = {make_shared<FullSync>()};
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            switch(comm) {
-                case GenSync::SyncComm::socket:
-                    communicants = {make_shared<CommSocket>(port, host)};
-                    break;
-                default:
-                    continue;
-            }
+    //         switch(comm) {
+    //             case GenSync::SyncComm::socket:
+    //                 communicants = {make_shared<CommSocket>(port, host)};
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            ret.emplace_back(communicants, methods);
-        }
-    }
+    //         ret.emplace_back(communicants, methods);
+    //     }
+    // }
     return ret;
 }
 
@@ -263,29 +267,30 @@ inline vector<GenSync> twoWayProbCombos(int expElems) {
     vector<GenSync> ret;
 
     // iterate through all possible combinations of communicant and syncmethod
-    for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
-        for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
-            vector<shared_ptr<Communicant>> communicants;
-            vector<shared_ptr<SyncMethod>> methods;
-            switch(prot) {
-                case GenSync::SyncProtocol::IBLTSync:
-                    methods = {make_shared<IBLTSync>(expElems, eltSize)};
-                    break;
-                default:
-                    continue;
-            }
+    // TODO
+    // for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
+    //     for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
+    //         vector<shared_ptr<Communicant>> communicants;
+    //         vector<shared_ptr<SyncMethod>> methods;
+    //         switch(prot) {
+    //             case GenSync::SyncProtocol::IBLTSync:
+    //                 methods = {make_shared<IBLTSync>(expElems, eltSize)};
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            switch(comm) {
-                case GenSync::SyncComm::socket:
-                    communicants = {make_shared<CommSocket>(port, host)};
-                    break;
-                default:
-                    continue;
-            }
+    //         switch(comm) {
+    //             case GenSync::SyncComm::socket:
+    //                 communicants = {make_shared<CommSocket>(port, host)};
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            ret.emplace_back(communicants, methods);
-        }
-    }
+    //         ret.emplace_back(communicants, methods);
+    //     }
+    // }
     return ret;
 }
 
@@ -298,29 +303,30 @@ inline vector<GenSync> oneWayProbCombos() {
     vector<GenSync> ret;
 
     // iterate through all possible combinations of communicant and syncmethod
-    for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
-        for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
-            vector<shared_ptr<Communicant>> communicants;
-            vector<shared_ptr<SyncMethod>> methods;
-            switch(prot) {
-                case GenSync::SyncProtocol::OneWayIBLTSync:
-                    methods = {make_shared<IBLTSync_HalfRound>(numExpElem, eltSize)};
-                    break;
-                default:
-                    continue;
-            }
+    // TODO
+    // for(auto prot = GenSync::SyncProtocol::BEGIN; prot != GenSync::SyncProtocol::END; ++prot) {
+    //     for(auto comm = GenSync::SyncComm::BEGIN; comm != GenSync::SyncComm::END; ++comm) {
+    //         vector<shared_ptr<Communicant>> communicants;
+    //         vector<shared_ptr<SyncMethod>> methods;
+    //         switch(prot) {
+    //             case GenSync::SyncProtocol::OneWayIBLTSync:
+    //                 methods = {make_shared<IBLTSync_HalfRound>(numExpElem, eltSize)};
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            switch(comm) {
-                case GenSync::SyncComm::socket:
-                    communicants = {make_shared<CommSocket>(port, host)};
-                    break;
-                default:
-                    continue;
-            }
+    //         switch(comm) {
+    //             case GenSync::SyncComm::socket:
+    //                 communicants = {make_shared<CommSocket>(port, host)};
+    //                 break;
+    //             default:
+    //                 continue;
+    //         }
 
-            ret.emplace_back(communicants, methods);
-        }
-    }
+    //         ret.emplace_back(communicants, methods);
+    //     }
+    // }
     return ret;
 }
 

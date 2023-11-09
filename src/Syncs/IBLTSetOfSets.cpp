@@ -9,6 +9,7 @@
 #include <GenSync/Syncs/IBLT.h>
 #include <GenSync/Aux/Exceptions.h>
 #include <GenSync/Syncs/IBLTSetOfSets.h>
+#include <GenSync/Benchmarks/BenchParams.h>
 
 /** 
  * Construct T, the outer IBLT for transmission
@@ -302,6 +303,10 @@ string IBLTSetOfSets::getName()
     return "IBLTSetOfSets\n   * expected number of elements = " + toStr(expNumElems) + "\n   * size of values =  " + toStr(myIBLT.eltSize()) + "\n   * size of inner values =  " + toStr(elemSize) + "\n";
 }
 
+std::shared_ptr<Params> IBLTSetOfSets::getParams() const {
+    return make_shared<IBLTParams>(getExpNumElems(), getElemSize(), getChildSize());;
+}
+
 pair<list<shared_ptr<DataObject>>,list<shared_ptr<DataObject>>> IBLTSetOfSets::_decodeInnerIBLT(
                                                             vector<pair<ZZ, ZZ>> &positiveChld, 
                                                             vector<pair<ZZ, ZZ>> &negativeChld)
@@ -392,4 +397,16 @@ pair<list<shared_ptr<DataObject>>,list<shared_ptr<DataObject>>> IBLTSetOfSets::_
     negativeChld.clear();
     decoded.clear();
     return {notOnThis,notOnThat};
+}
+
+std::shared_ptr<Params> IBLTSetOfSetsProtocol::readParams(std::istream &is) const {
+    auto par = make_shared<IBLTParams>();
+    is >> *par;
+    return par;
+}
+
+std::shared_ptr<SyncMethod>
+IBLTSetOfSetsProtocol::makeSyncMethod(const SyncParameters &syncParams) const {
+    return std::make_shared<IBLTSetOfSets>(syncParams.numExpElem, syncParams.numElemChldSet, syncParams.bits);
+    // TODO postprocessing thing
 }

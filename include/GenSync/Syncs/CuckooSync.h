@@ -15,6 +15,7 @@
 #include <GenSync/Aux/SyncMethod.h>
 #include <GenSync/Aux/Auxiliary.h>
 #include <GenSync/Syncs/Cuckoo.h>
+#include <GenSync/Syncs/SyncProtocol.h>
 
 class CuckooSync : public SyncMethod {
 public:
@@ -33,7 +34,9 @@ public:
 
     bool addElem(shared_ptr<DataObject> datum) override;
 
-    string getName() override;
+    std::shared_ptr<Params> getParams() const override;
+
+    string getName() override { return "CuckooSync"; }
 
     /* Getters for the parameters set in the constructor */
     size_t getFngprtSize() const {return myCF.getFngprtSize();};
@@ -46,6 +49,16 @@ private:
      * Cuckoo filter for reconciliation
      */
     Cuckoo myCF;
+};
+
+class CuckooSyncProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "CuckooSync"; }
+
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
 };
 
 #endif // GENSYNCLIB_CUCKOOSYNC_H

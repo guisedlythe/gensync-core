@@ -15,6 +15,7 @@
 #include <GenSync/Data/DataObject.h>
 #include <GenSync/Aux/Auxiliary.h>
 #include <GenSync/Aux/SyncMethod.h>
+#include <GenSync/Syncs/SyncProtocol.h>
 
 // namespace info
 using std::string;
@@ -34,6 +35,30 @@ using std::ios;
 using std::invalid_argument;
 using std::runtime_error;
 using std::shared_ptr;
+
+struct SyncParameters {
+    Nullable<long> mbar = DFT_MBAR; /** an upper estimate on the number of differences between synchronizing data multisets. */
+    Nullable<long> bits = DFT_BITS; /** the number of bits per element of data */
+    Nullable<int> numParts = DFT_PARTS; /** the number of partitions into which to divide recursively for interactive methods. */
+    Nullable<size_t> numExpElem = DFT_EXPELEMS; /** the number of elements expected to be stored in the data structure (e.g., for IBLT) */
+    int errorProb = DFT_ERROR; /** negative log of the upper bound on the probability of error tolerance of the sync */
+    bool hashes = HASHES;
+    Nullable<long> numElemChldSet; /** exp # of elements in a child set **/
+
+    Nullable<size_t> fngprtSize; /** Cuckoo filter parameters */
+    Nullable<size_t> bucketSize;
+    Nullable<size_t> filterSize;
+    Nullable<size_t> maxKicks;
+
+
+    static const bool HASHES = false;
+    static const Nullable<long> DFT_MBAR; // this parameter *must* be specified for sync to work
+    static const long DFT_BITS = 32;
+    static const int DFT_PARTS = 2;
+    static const size_t DFT_EXPELEMS = 50;
+    static const int DFT_ERROR;
+};
+
 /**
  * Implements a data structure for storing sets of data
  * in a manner that is designed for efficient synchronization.
@@ -70,13 +95,6 @@ public:
     GenSync(
             const vector<shared_ptr<Communicant>> &cVec,
             const vector<shared_ptr<SyncMethod>> &mVec,
-            void (*postProcessing)(
-                    list<shared_ptr<DataObject>>,
-                    list<shared_ptr<DataObject>>,
-                    void (GenSync::*add)(shared_ptr<DataObject>),
-                    bool (GenSync::*del)(shared_ptr<DataObject>),
-                    GenSync *pGenSync)
-            = SyncMethod::postProcessing_SET,
             const list<shared_ptr<DataObject>> &data = list<shared_ptr<DataObject>>()
     );
 
@@ -308,27 +326,27 @@ public:
      */
     class Builder;
 
-    /**
-     * Protocols that are implemented for use in data synchronization
-     */
-    enum class SyncProtocol {
-        UNDEFINED, // not yet defined
-        BEGIN, // beginning of iterable option
-        // GenSync and variants
-        CPISync= static_cast<int>(BEGIN),
-        CPISync_OneLessRound,
-        CPISync_HalfRound,
-        ProbCPISync,
-        InteractiveCPISync,
-        OneWayCPISync,
-        FullSync,
-        IBLTSync,
-        OneWayIBLTSync,
-        IBLTSetOfSets,
-        IBLTSync_Multiset,
-        CuckooSync,
-        END     // one after the end of iterable options
-    };
+    // /**
+    //  * Protocols that are implemented for use in data synchronization
+    //  */
+    // enum class SyncProtocol {
+    //     UNDEFINED, // not yet defined
+    //     BEGIN, // beginning of iterable option
+    //     // GenSync and variants
+    //     CPISync= static_cast<int>(BEGIN),
+    //     CPISync_OneLessRound,
+    //     CPISync_HalfRound,
+    //     ProbCPISync,
+    //     InteractiveCPISync,
+    //     OneWayCPISync,
+    //     FullSync,
+    //     IBLTSync,
+    //     OneWayIBLTSync,
+    //     IBLTSetOfSets,
+    //     IBLTSync_Multiset,
+    //     CuckooSync,
+    //     END     // one after the end of iterable options
+    // };
 
     enum class SyncComm {
         UNDEFINED, // not yet defined
@@ -348,7 +366,7 @@ private:
     GenSync();
 
     /** A pointer to the postprocessing function **/
-    void (*_PostProcessing)(list<shared_ptr<DataObject>>, list<shared_ptr<DataObject>>, void (GenSync::*add)(shared_ptr<DataObject>), bool (GenSync::*del)(shared_ptr<DataObject>), GenSync *pGenSync){};
+    // void (*_PostProcessing)(list<shared_ptr<DataObject>>, list<shared_ptr<DataObject>>, void (GenSync::*add)(shared_ptr<DataObject>), bool (GenSync::*del)(shared_ptr<DataObject>), GenSync *pGenSync){};
 
 
     // FIELDS
@@ -385,17 +403,10 @@ public:
 
     /** Constructor - makes all fields undefined. */
     Builder() :
-    proto(DFT_PROTO),
     host(DFT_HOST),
     port(DFT_PRT),
     ioStr(DFT_IO),
-    errorProb(DFT_ERROR),
-    base64(DFT_BASE64),
-    mbar(DFT_MBAR),
-    bits(DFT_BITS),
-    numParts(DFT_PARTS),
-    hashes(HASHES),
-    numExpElem(DFT_EXPELEMS){
+    base64(DFT_BASE64) {
         myComm = nullptr;
         myMeth = nullptr;
     }
@@ -409,7 +420,7 @@ public:
     /**
      * Sets the protocol to be used for synchronization.
      */
-    Builder& setProtocol(SyncProtocol theProto) {
+    Builder& setProtocol(const std::shared_ptr<SyncProtocol>& theProto) {
         this->proto = theProto;
         return *this;
     }
@@ -443,7 +454,7 @@ public:
      * @param theErrorProb This is negative log of the maximum error probability to be tolerated.
      */
     Builder& setErr(int theErrorProb) {
-        this->errorProb = theErrorProb;
+        syncParameters.errorProb = theErrorProb;
         return *this;
     }
 
@@ -459,7 +470,7 @@ public:
      * Sets the maximum number of differences that the synchronization protocol is expected to synchronize.
      */
     Builder& setMbar(long theMbar) {
-        this->mbar = theMbar;
+        syncParameters.mbar = theMbar;
         return *this;
     }
 
@@ -467,7 +478,7 @@ public:
      * Sets the number of bits to be used to represent one datum.
      */
     Builder& setBits(long theBits) {
-        this->bits = theBits;
+        syncParameters.bits = theBits;
         return *this;
     }
 
@@ -475,7 +486,7 @@ public:
      * Sets the number of partitions to use in recursive calls for interactive protocols like InteractiveCPISync
      */
     Builder& setNumPartitions(long theNumParts) {
-        this->numParts = theNumParts;
+        syncParameters.numParts = theNumParts;
         return *this;
     }
 
@@ -484,7 +495,7 @@ public:
      * a specific number of elements.
      */
     Builder& setExpNumElems(size_t theNumExpElems) {
-        this->numExpElem = theNumExpElems;
+        syncParameters.numExpElem = theNumExpElems;
         return *this;
     }
 
@@ -496,22 +507,22 @@ public:
      * via corresponding subclass of GenSync.
      */
     Builder& setFngprtSize(size_t s) {
-        this->fngprtSize = s;
+        syncParameters.fngprtSize = s;
         return *this;
     }
 
     Builder& setBucketSize(size_t s) {
-        this->bucketSize = s;
+        syncParameters.bucketSize = s;
         return *this;
     }
 
     Builder& setFilterSize(size_t s) {
-        this->filterSize = s;
+        syncParameters.filterSize = s;
         return *this;
     }
 
     Builder& setMaxKicks(size_t s) {
-        this->maxKicks = s;
+        syncParameters.maxKicks = s;
         return *this;
     }
 
@@ -524,14 +535,14 @@ public:
     }
 
 	Builder& setHashes(bool theHash) {
-		this->hashes = theHash;
+		syncParameters.hashes = theHash;
 		return *this;
 	}
 
 
     Builder &setExpNumElemChild(long NUMELEM)
     {
-        this->numElemChldSet = NUMELEM;
+        syncParameters.numElemChldSet = NUMELEM;
         return *this;
     }
 
@@ -547,44 +558,25 @@ public:
     }
 
 private:
-    SyncProtocol proto; /** the sync protocol to implement */
+    std::shared_ptr<SyncProtocol>proto = nullptr; /** the sync protocol to implement */
     SyncComm comm; /** communication means for the synchronization */
     string host; /** the host with which to connect for a socket-based sync */
     int port; /** connection port for a socket-based sync */
-    int errorProb; /** negative log of the upper bound on the probability of error tolerance of the sync */
     const bool base64; /** whether or not ioStr represents a base64 string */
     string ioStr; /** the string with which to communicate input/output for string-based sync. */
-    Nullable<long> mbar; /** an upper estimate on the number of differences between synchronizing data multisets. */
-    Nullable<long> bits; /** the number of bits per element of data */
-    Nullable<int> numParts; /** the number of partitions into which to divide recursively for interactive methods. */
-    Nullable<size_t> numExpElem; /** the number of elements expected to be stored in the data structure (e.g., for IBLT) */
     Nullable<string> fileName;   /** the name of a file from which to draw data for the initialization of the sync object. */
-	bool hashes = Builder::HASHES;
-    Nullable<long> numElemChldSet; /** exp # of elements in a child set **/
-    Nullable<size_t> fngprtSize; /** Cuckoo filter parameters */
-    Nullable<size_t> bucketSize;
-    Nullable<size_t> filterSize;
-    Nullable<size_t> maxKicks;
+    SyncParameters syncParameters;
 
 
     // ... bookkeeping variables
     shared_ptr<Communicant> myComm;
     shared_ptr<SyncMethod> myMeth;
-    // bookkeeping postprocessing function pointer
-    void (*_postProcess)(list<shared_ptr<DataObject>>, list<shared_ptr<DataObject>>, void (GenSync::*add)(shared_ptr<DataObject>), bool (GenSync::*del)(shared_ptr<DataObject>), GenSync *pGenSync);
     // DEFAULT constants
-    static const bool HASHES = false;
-    static const SyncProtocol DFT_PROTO = SyncProtocol::UNDEFINED;
     static const int DFT_PRT = 8001;
     static const bool DFT_BASE64 = true;
-    static const Nullable<long> DFT_MBAR; // this parameter *must* be specified for sync to work
-    static const long DFT_BITS = 32;
-    static const int DFT_PARTS = 2;
-    static const size_t DFT_EXPELEMS = 50;
     // ... initialized in .cpp file due to C++ quirks
     static const string DFT_HOST;
     static const string DFT_IO;
-    static const int DFT_ERROR;
 };
 
 #endif

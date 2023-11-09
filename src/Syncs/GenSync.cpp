@@ -1,5 +1,6 @@
 /* This code is part of the GenSync project developed at Boston University.  Please see the README for use and references. */
 
+#include "GenSync/Aux/SyncMethod.h"
 #include <iostream>
 #include <fstream>
 
@@ -17,6 +18,7 @@
 #include <GenSync/Syncs/CPISync_HalfRound.h>
 #include <GenSync/Syncs/IBLTSetOfSets.h>
 #include <GenSync/Syncs/CuckooSync.h>
+#include <stdexcept>
 
 #if defined (RECORD)
 #include <GenSync/Benchmarks/BenchParams.h>
@@ -40,13 +42,12 @@ GenSync::GenSync() = default;
 GenSync::GenSync(
                  const vector<shared_ptr<Communicant>> &cVec,
                  const vector<shared_ptr<SyncMethod>> &mVec,
-                 void (*postProcessing)(list<shared_ptr<DataObject>>,list<shared_ptr<DataObject>>,void (GenSync::*add)(shared_ptr<DataObject>),bool (GenSync::*del)(shared_ptr<DataObject>), GenSync *pGenSync),
                  const list<shared_ptr<DataObject>> &data)
 {
     myCommVec = cVec;
     mySyncVec = mVec;
     outFile = nullptr; // no output file is being used
-    _PostProcessing = postProcessing;
+    // _PostProcessing = postProcessing;
 
     // add each datum one by one
     auto itData = data.begin();
@@ -349,7 +350,8 @@ bool GenSync::serverSyncBegin(int sync_num) {
 #endif
 
         // post process and add any items that were found in the reconciliation
-        _PostProcessing(otherMinusSelf, myData, &GenSync::addElem, &GenSync::delElem, this);
+        (*syncAgent)->postProcess(otherMinusSelf, myData, &GenSync::addElem, &GenSync::delElem, this);
+        // _PostProcessing(otherMinusSelf, myData, &GenSync::addElem, &GenSync::delElem, this);
     }
 
     return syncSuccess;
@@ -389,7 +391,8 @@ bool GenSync::clientSyncBegin(int sync_num) {
 #endif
 
         // add any items that were found in the reconciliation
-        _PostProcessing(otherMinusSelf, myData, &GenSync::addElem, &GenSync::delElem, this);
+        (*syncAgentIt)->postProcess(otherMinusSelf, myData, &GenSync::addElem, &GenSync::delElem, this);
+        // _PostProcessing(otherMinusSelf, myData, &GenSync::addElem, &GenSync::delElem, this);
     }
 
     Logger::gLog(Logger::METHOD, "Sync succeeded:  " + toStr(syncSuccess));
@@ -453,7 +456,7 @@ GenSync GenSync::Builder::build() {
     vector<shared_ptr<SyncMethod>> theMeths;
 
     // check pre-conditions
-    if (proto == SyncProtocol::UNDEFINED)
+    if (!proto)
         throw invalid_argument("The synchronization protocol has not been defined.");
     if (comm == SyncComm::UNDEFINED)
         throw invalid_argument("No communication protocol defined.");
@@ -473,59 +476,61 @@ GenSync GenSync::Builder::build() {
     }
     theComms.push_back(myComm);
 
-    const invalid_argument noMbar("Must define <mbar> explicitly for this sync.");
+    // const invalid_argument noMbar("Must define <mbar> explicitly for this sync.");
 
-    // set default post process function pointer
-    _postProcess = SyncMethod::postProcessing_SET;
-    
-    switch (proto)
-    {
-        case SyncProtocol::CPISync:
-            if (mbar.isNullQ())
-                throw noMbar;
-            myMeth = make_shared<CPISync>(mbar, bits, errorProb, 0, hashes);
-            break;
-        case SyncProtocol::ProbCPISync:
-            if (mbar.isNullQ())
-                throw noMbar;
-            myMeth = make_shared<ProbCPISync>(mbar, bits, errorProb, hashes);
-            break;
-        case SyncProtocol::InteractiveCPISync:
-            if (mbar.isNullQ())
-                throw noMbar;
-            myMeth = make_shared<InterCPISync>(mbar, bits, errorProb, numParts, hashes);
-            break;
-        case SyncProtocol::OneWayCPISync:
-            if (mbar.isNullQ())
-                throw noMbar;
-            myMeth = make_shared<CPISync_HalfRound>(mbar, bits, errorProb);
-            break;
-        case SyncProtocol::FullSync:
-            myMeth = make_shared<FullSync>();
-            break;
-        case SyncProtocol::IBLTSync:
-            myMeth = make_shared<IBLTSync>(numExpElem, bits);
-            break;
-        case SyncProtocol::OneWayIBLTSync:
-            myMeth = make_shared<IBLTSync_HalfRound>(numExpElem, bits);
-            break;
-        case SyncProtocol::IBLTSetOfSets:
-            myMeth = make_shared<IBLTSetOfSets>(numExpElem, numElemChldSet, bits);
-            _postProcess = IBLTSetOfSets::postProcessing_IBLTSetOfSets;
-            break;
-        case SyncProtocol::CuckooSync:
-            myMeth = make_shared<CuckooSync>(fngprtSize, bucketSize, filterSize, maxKicks);
-            break;
-        case SyncProtocol::IBLTSync_Multiset:
-            myMeth = make_shared<IBLTSync_Multiset>(numExpElem, bits);
-            break;
-        default:
-            throw invalid_argument("I don't know how to synchronize with this protocol.");
+    myMeth = proto->makeSyncMethod(syncParameters);
+    if(!myMeth) {
+        throw invalid_argument("Could not make sync method.");
     }
+
+    // switch (proto)
+    // {
+    //     case SyncProtocol::CPISync:
+    //         if (mbar.isNullQ())
+    //             throw noMbar;
+    //         myMeth = make_shared<CPISync>(mbar, bits, errorProb, 0, hashes);
+    //         break;
+    //     case SyncProtocol::ProbCPISync:
+    //         if (mbar.isNullQ())
+    //             throw noMbar;
+    //         myMeth = make_shared<ProbCPISync>(mbar, bits, errorProb, hashes);
+    //         break;
+    //     case SyncProtocol::InteractiveCPISync:
+    //         if (mbar.isNullQ())
+    //             throw noMbar;
+    //         myMeth = make_shared<InterCPISync>(mbar, bits, errorProb, numParts, hashes);
+    //         break;
+    //     case SyncProtocol::OneWayCPISync:
+    //         if (mbar.isNullQ())
+    //             throw noMbar;
+    //         myMeth = make_shared<CPISync_HalfRound>(mbar, bits, errorProb);
+    //         break;
+    //     case SyncProtocol::FullSync:
+    //         myMeth = make_shared<FullSync>();
+    //         break;
+    //     case SyncProtocol::IBLTSync:
+    //         myMeth = make_shared<IBLTSync>(numExpElem, bits);
+    //         break;
+    //     case SyncProtocol::OneWayIBLTSync:
+    //         myMeth = make_shared<IBLTSync_HalfRound>(numExpElem, bits);
+    //         break;
+    //     case SyncProtocol::IBLTSetOfSets:
+    //         myMeth = make_shared<IBLTSetOfSets>(numExpElem, numElemChldSet, bits);
+    //        _postProcess = IBLTSetOfSets::postProcessing_IBLTSetOfSets;
+    //         break;
+    //     case SyncProtocol::CuckooSync:
+    //         myMeth = make_shared<CuckooSync>(fngprtSize, bucketSize, filterSize, maxKicks);
+    //         break;
+    //     case SyncProtocol::IBLTSync_Multiset:
+    //         myMeth = make_shared<IBLTSync_Multiset>(numExpElem, bits);
+    //         break;
+    //     default:
+    //         throw invalid_argument("I don't know how to synchronize with this protocol.");
+    // }
     theMeths.push_back(myMeth);
 
     if (fileName.isNullQ()) // is data to be drawn from a file?
-        return GenSync(theComms, theMeths, _postProcess);
+        return GenSync(theComms, theMeths);
     else
         return GenSync(theComms, theMeths, fileName);
 }
@@ -534,5 +539,5 @@ GenSync GenSync::Builder::build() {
 
 const string GenSync::Builder::DFT_HOST = "localhost";
 const string GenSync::Builder::DFT_IO;
-const int GenSync::Builder::DFT_ERROR = 8;
-const Nullable<long> GenSync::Builder::DFT_MBAR = NOT_SET<long>();
+const int SyncParameters::DFT_ERROR = 8;
+const Nullable<long> SyncParameters::DFT_MBAR = NOT_SET<long>();

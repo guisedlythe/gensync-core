@@ -32,7 +32,7 @@ void CuckooSyncTest::setReconcileTest() {
     const size_t maxKicks = 500;
 
     GenSync server = GenSync::Builder()
-        .setProtocol(GenSync::SyncProtocol::CuckooSync)
+        .setProtocol(std::make_shared<CuckooSyncProtocol>())
         .setComm(GenSync::SyncComm::socket)
         .setBits(bits)
         .setFngprtSize(fngprtSize)
@@ -42,7 +42,7 @@ void CuckooSyncTest::setReconcileTest() {
         .build();
 
     GenSync client = GenSync::Builder()
-        .setProtocol(GenSync::SyncProtocol::CuckooSync)
+        .setProtocol(std::make_shared<CuckooSyncProtocol>())
         .setComm(GenSync::SyncComm::socket)
         .setBits(bits)
         .setFngprtSize(fngprtSize)

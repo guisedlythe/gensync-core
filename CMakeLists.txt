@@ -73,6 +73,7 @@ set(SOURCE_FILES
         ${SYNC_DIR}/Cuckoo.cpp
         ${SYNC_DIR}/CuckooSync.cpp
         ${SYNC_DIR}/FullSync.cpp
+        ${SYNC_DIR}/SyncProtocol.cpp
 
         ${BENCH_DIR}/BenchParams.cpp
         ${BENCH_DIR}/FromFileGen.cpp
@@ -120,6 +121,7 @@ set(HEADERS
         ${SYNC_DIR_INC}/InterCPISync.h
         ${SYNC_DIR_INC}/PrioCPISync.h
         ${SYNC_DIR_INC}/ProbCPISync.h
+        ${SYNC_DIR_INC}/SyncProtocol.h
 
         ${SYNC_BENCH_INC}/BenchObserv.h
         ${SYNC_BENCH_INC}/BenchParams.h
@@ -149,8 +151,8 @@ install(DIRECTORY DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GenSync) #create a new
 install(DIRECTORY ${AUX_DIR_INC} ${DATA_DIR_INC} ${COMM_DIR_INC} ${SYNC_DIR_INC} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GenSync COMPONENT devel) #copy the contents of the include folder into the system include directory
 
 # Add the TryMe executable
-add_executable(TryMe ${SRC_DIR}/TryMe.cpp)
-target_link_libraries(TryMe gensync)
+# add_executable(TryMe ${SRC_DIR}/TryMe.cpp)
+# target_link_libraries(TryMe gensync)
 
 # Benchmarks
 add_executable(Benchmarks ${BENCH_DIR}/Runner.cpp)

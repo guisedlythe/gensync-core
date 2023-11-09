@@ -4,6 +4,7 @@
 // Created by Eliezer Pearl on 8/3/2018.
 //
 
+#include "GenSync/Benchmarks/BenchParams.h"
 #include <GenSync/Aux/Exceptions.h>
 #include <GenSync/Syncs/IBLTSync.h>
 
@@ -158,3 +159,18 @@ bool IBLTSync::delElem(shared_ptr<DataObject> datum){
     return true;
 }
 string IBLTSync::getName(){ return "IBLTSync\n   * expected number of elements = " + toStr(expNumElems) + "\n   * size of values =  " + toStr(myIBLT.eltSize()) + '\n';}
+
+std::shared_ptr<Params> IBLTSync::getParams() const {
+    return std::make_shared<IBLTParams>(getExpNumElems(), getElementSize());
+}
+
+std::shared_ptr<Params> IBLTSyncProtocol::readParams(std::istream &is) const {
+    auto par = make_shared<IBLTParams>();
+    is >> *par;
+    return par;
+}
+
+std::shared_ptr<SyncMethod>
+IBLTSyncProtocol::makeSyncMethod(const SyncParameters &syncParams) const {
+    return std::make_shared<IBLTSync>(syncParams.numExpElem, syncParams.bits);
+}

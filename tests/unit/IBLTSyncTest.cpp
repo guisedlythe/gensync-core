@@ -6,6 +6,7 @@
 #include "IBLTSyncTest.h"
 #include <GenSync/Syncs/GenSync.h>
 #include <GenSync/Syncs/IBLTSync.h>
+#include "GenSync/Syncs/IBLTSync_Multiset.h"
 #include "TestAuxiliary.h"
 CPPUNIT_TEST_SUITE_REGISTRATION(IBLTSyncTest);
 
@@ -16,6 +17,7 @@ IBLTSyncTest::~IBLTSyncTest() = default;
 void IBLTSyncTest::setUp() {
     const int SEED = 93;
     srand(SEED);
+    ZZ_p::init(randZZ());
 }
 
 void IBLTSyncTest::tearDown() {
@@ -25,14 +27,14 @@ void IBLTSyncTest::IBLTSyncSetReconcileTest() {
     const int BITS = sizeof(randZZ());
 
 	GenSync GenSyncServer = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::IBLTSync).
+			setProtocol(std::make_shared<IBLTSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			setBits(BITS).
 			setExpNumElems(numExpElem).
 			build();
 
 	GenSync GenSyncClient = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::IBLTSync).
+			setProtocol(std::make_shared<IBLTSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			setBits(BITS).
 			setExpNumElems(numExpElem).
@@ -46,14 +48,14 @@ void IBLTSyncTest::IBLTSyncMultisetReconcileTest() {
 	const int BITS = sizeof(randZZ());
 
 	GenSync GenSyncServer = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::IBLTSync_Multiset).
+			setProtocol(std::make_shared<IBLTSyncMultisetProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			setBits(BITS).
 			setExpNumElems(numExpElem).
 			build();
 
 	GenSync GenSyncClient = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::IBLTSync_Multiset).
+			setProtocol(std::make_shared<IBLTSyncMultisetProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			setBits(BITS).
 			setExpNumElems(numExpElem).
@@ -67,14 +69,14 @@ void IBLTSyncTest::IBLTSyncLargeSetReconcileTest() {
 	const int BITS = sizeof(randZZ());
 
 	GenSync GenSyncServer = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::IBLTSync).
+			setProtocol(std::make_shared<IBLTSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			setBits(BITS).
 			setExpNumElems(largeNumExpElems).
 			build();
 
 	GenSync GenSyncClient = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::IBLTSync).
+			setProtocol(std::make_shared<IBLTSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			setBits(BITS).
 			setExpNumElems(largeNumExpElems).
@@ -121,7 +123,7 @@ void IBLTSyncTest::testIBLTParamMismatch(){
     const int BITS = sizeof(randZZ());
 
     GenSync GenSyncServer = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::IBLTSync).
+			setProtocol(std::make_shared<IBLTSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			setBits(BITS).
 			//Different number of expectedElements to ensure that mismatches cause failure properly
@@ -129,7 +131,7 @@ void IBLTSyncTest::testIBLTParamMismatch(){
 			build();
 
 	GenSync GenSyncClient = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::IBLTSync).
+			setProtocol(std::make_shared<IBLTSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			setBits(BITS).
 			setExpNumElems(numExpElem).

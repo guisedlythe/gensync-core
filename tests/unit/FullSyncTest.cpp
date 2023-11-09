@@ -9,6 +9,9 @@
 
 #include "FullSyncTest.h"
 #include <GenSync/Syncs/FullSync.h>
+#include <memory>
+#include "GenSync/Benchmarks/BenchParams.h"
+#include "GenSync/Syncs/SyncProtocol.h"
 #include "TestAuxiliary.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FullSyncTest);
@@ -29,12 +32,12 @@ void FullSyncTest::tearDown() {
 void FullSyncTest::FullSyncSetReconcileTest() {
 
 	GenSync GenSyncServer = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::FullSync).
+			setProtocol(std::make_shared<FullSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			build();
 
 	GenSync GenSyncClient = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::FullSync).
+			setProtocol(std::make_shared<FullSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			build();
 	//(oneWay = false, probSync = false, syncParamTest = false, Multiset = false, largeSync = false)
@@ -43,12 +46,12 @@ void FullSyncTest::FullSyncSetReconcileTest() {
 
  void FullSyncTest::FullSyncMultisetReconcileTest(){
 	 GenSync GenSyncServer = GenSync::Builder().
-			 setProtocol(GenSync::SyncProtocol::FullSync).
+			 setProtocol(std::make_shared<FullSyncProtocol>()).
 			 setComm(GenSync::SyncComm::socket).
 			 build();
 
 	 GenSync GenSyncClient = GenSync::Builder().
-			 setProtocol(GenSync::SyncProtocol::FullSync).
+			 setProtocol(std::make_shared<FullSyncProtocol>()).
 			 setComm(GenSync::SyncComm::socket).
 			 build();
 
@@ -59,12 +62,12 @@ void FullSyncTest::FullSyncSetReconcileTest() {
 void FullSyncTest::FullSyncLargeSetReconcileTest() {
 
 	GenSync GenSyncServer = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::FullSync).
+			setProtocol(std::make_shared<FullSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			build();
 
 	GenSync GenSyncClient = GenSync::Builder().
-			setProtocol(GenSync::SyncProtocol::FullSync).
+			setProtocol(std::make_shared<FullSyncProtocol>()).
 			setComm(GenSync::SyncComm::socket).
 			build();
 

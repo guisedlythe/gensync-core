@@ -17,6 +17,9 @@
 using std::vector;
 using std::list;
 
+struct Params;
+class GenSync;
+
 /**
  * SyncMethod.h -- abstract class for sync methods
  * This is the base class for all synchronization methods.
@@ -94,6 +97,17 @@ public:
         return before > elements.size(); // true iff there were more elements before removal than after
     };
 
+    virtual std::shared_ptr<Params> getParams() const { return nullptr; }; // TODO: should be pure virtual
+
+    virtual void
+    postProcess(std::list<std::shared_ptr<DataObject>> otherMinusSelf,
+                std::list<std::shared_ptr<DataObject>> myData,
+                void (GenSync::*add)(std::shared_ptr<DataObject>),
+                bool (GenSync::*del)(std::shared_ptr<DataObject>),
+                GenSync *pGenSync) const {
+        postProcessing_SET(otherMinusSelf, myData, add, del, pGenSync);
+    }
+
     // INFORMATIONAL
     /**
      * @return A human-readable name for the synchronization method.
@@ -131,7 +145,6 @@ public:
      * @return An iterator pointing just past the last element in the data structure
      */
     vector<shared_ptr<DataObject>>::const_iterator endElements() { return elements.end();}
-
 
 
     /**

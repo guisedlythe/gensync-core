@@ -22,6 +22,7 @@
 #include <GenSync/Aux/Auxiliary.h>
 #include <GenSync/Aux/SyncMethod.h>
 #include <GenSync/Aux/Exceptions.h>
+#include <GenSync/Syncs/SyncProtocol.h>
 
 // namespaces
 using namespace NTL;
@@ -41,6 +42,7 @@ public:
     bool SyncServer(const shared_ptr<Communicant>& commSync, list<shared_ptr<DataObject>> &selfMinusOther, list<shared_ptr<DataObject>> &otherMinusSelf) override;
     bool addElem(shared_ptr<DataObject> newDatum) override;
     bool delElem(shared_ptr<DataObject> newDatum) override;
+    std::shared_ptr<Params> getParams() const override;
     inline string getName() override { return "Full Sync"; }
 
     /**
@@ -51,5 +53,14 @@ private:
     multiset<shared_ptr<DataObject>, cmp<shared_ptr<DataObject>>> myData;
 };
 
-#endif /* FULLSYNC_H */
+class FullSyncProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "FullSync"; }
 
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
+};
+
+#endif /* FULLSYNC_H */

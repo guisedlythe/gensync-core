@@ -10,6 +10,7 @@
 #include <NTL/ZZ_pXFactoring.h>
 #include <GenSync/Aux/Auxiliary.h>
 #include <GenSync/Aux/SyncMethod.h>
+#include <GenSync/Syncs/SyncProtocol.h>
 
 // namespaces
 
@@ -108,6 +109,8 @@ public:
 
   // update metadata when an element is being deleted (the element is supplied by index)
   bool delElem(shared_ptr<DataObject> newDatum) override;
+
+  std::shared_ptr<Params> getParams() const override;
 
   /**
    * @return A string with some internal information about this object.
@@ -308,4 +311,15 @@ private:
   void _makeStructures(const shared_ptr<Communicant> &commSync, list<shared_ptr<DataObject>> &selfMinusOther,
 					   list<shared_ptr<DataObject>> &otherMinusSelf, vec_ZZ_p &delta_self, vec_ZZ_p &delta_other);
 };
+
+class CPISyncProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "CPISync"; }
+
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
+};
+
 #endif

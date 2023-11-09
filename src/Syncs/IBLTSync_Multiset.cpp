@@ -2,8 +2,9 @@
 // Created by Shubham Arora on 7/20/20.
 //
 
-#include <GenSync/Aux/Exceptions.h>
 #include <GenSync/Syncs/IBLTSync_Multiset.h>
+#include <GenSync/Aux/Exceptions.h>
+#include <GenSync/Benchmarks/BenchParams.h>
 
 IBLTSync_Multiset::IBLTSync_Multiset(size_t expected, size_t eltSize): myIBLT(expected, eltSize) {
     expNumElems = expected;
@@ -159,4 +160,19 @@ bool IBLTSync_Multiset::delElem(shared_ptr<DataObject> datum){
 string IBLTSync_Multiset::getName() {
     return "IBLTSync_Multiset\n   * expected number of elements = " + toStr(expNumElems) + "\n   * size of values =  " +
            toStr(myIBLT.eltSize()) + '\n';
+}
+
+std::shared_ptr<Params> IBLTSync_Multiset::getParams() const {
+    return std::make_shared<IBLTParams>(getExpNumElems(), getElementSize());
+}
+
+std::shared_ptr<Params> IBLTSyncMultisetProtocol::readParams(std::istream &is) const {
+    auto par = make_shared<IBLTParams>();
+    is >> *par;
+    return par;
+}
+
+std::shared_ptr<SyncMethod>
+IBLTSyncMultisetProtocol::makeSyncMethod(const SyncParameters &syncParams) const {
+    return std::make_shared<IBLTSync_Multiset>(syncParams.numExpElem, syncParams.bits);
 }

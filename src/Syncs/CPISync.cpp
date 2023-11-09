@@ -1,6 +1,8 @@
 /* This code is part of the GenSync project developed at Boston University.  Please see the README for use and references. */
 
 // standard libraries
+#include "GenSync/Benchmarks/BenchParams.h"
+#include <stdexcept>
 #include <utility>
 #include <vector>
 #include <fstream>
@@ -810,4 +812,21 @@ string CPISync::printElem() {
     for (it = CPI_hash.begin(); it != CPI_hash.end(); it++)
         result << (it->second)->to_string() << " [hash=" << (it->first) << "], ";
     return result.str();
+}
+
+std::shared_ptr<Params> CPISync::getParams() const {
+    return std::make_shared<FullSyncParams>();
+}
+
+std::shared_ptr<Params> CPISyncProtocol::readParams(std::istream &is) const {
+    auto par = make_shared<CPISyncParams>();
+    is >> *par;
+    return par;
+}
+
+std::shared_ptr<SyncMethod>
+CPISyncProtocol::makeSyncMethod(const SyncParameters &syncParams) const {
+    if (syncParams.mbar.isNullQ())
+        throw std::invalid_argument("Must define <mbar> explicitly for CPISync.");
+    return std::make_shared<CPISync>(syncParams.mbar, syncParams.bits, syncParams.errorProb, 0, syncParams.hashes);
 }

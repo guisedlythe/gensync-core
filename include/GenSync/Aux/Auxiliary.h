@@ -700,7 +700,7 @@ public:
      */
     operator T() const { return operator*(); }
 
-    bool isNullQ() { return nulled; }
+    bool isNullQ() const { return nulled; }
 private:
     bool nulled=true;
     T val;
@@ -709,4 +709,3 @@ private:
 template <class T>
 Nullable<T> NOT_SET() { return Nullable<T>(); }
 #endif	/* AUX_H */
-

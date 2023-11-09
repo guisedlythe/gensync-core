@@ -9,6 +9,7 @@
  * https://www.cs.cmu.edu/~dga/papers/cuckoo-conext2014.pdf
  */
 
+#include "GenSync/Benchmarks/BenchParams.h"
 #include <GenSync/Aux/Exceptions.h>
 #include <GenSync/Syncs/CuckooSync.h>
 
@@ -18,8 +19,6 @@ CuckooSync::CuckooSync(size_t fngprtSize, size_t bucketSize,
 }
 
 CuckooSync::~CuckooSync() = default;
-
-string CuckooSync::getName() {return "CuckooSync";}
 
 bool CuckooSync::SyncClient(const shared_ptr<Communicant>& commSync,
                             list<shared_ptr<DataObject>>& selfMinusOther,
@@ -144,4 +143,22 @@ bool CuckooSync::addElem(shared_ptr<DataObject> datum) {
         Logger::gLog(Logger::METHOD_DETAILS, "Cuckoo insert has failed.");
 
     return true;
+}
+
+std::shared_ptr<Params> CuckooSync::getParams() const {
+    return std::make_shared<CuckooParams>(getFngprtSize(), getBucketSize(),
+                                          getFilterSize(), getMaxKicks());
+}
+
+std::shared_ptr<Params> CuckooSyncProtocol::readParams(std::istream &is) const {
+    auto par = make_shared<CuckooParams>();
+    is >> *par;
+    return par;
+}
+
+std::shared_ptr<SyncMethod>
+CuckooSyncProtocol::makeSyncMethod(const SyncParameters &syncParams) const {
+    return std::make_shared<CuckooSync>(
+        syncParams.fngprtSize, syncParams.bucketSize, syncParams.filterSize,
+        syncParams.maxKicks);
 }

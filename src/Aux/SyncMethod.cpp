@@ -23,6 +23,3 @@ void SyncMethod::RecvSyncParam(const shared_ptr<Communicant>& commSync, bool one
 if (!commSync->establishModRecv(oneWay)) // establish ZZ_p modulus - must be first
       throw SyncFailureException("Sync parameters do not match between communicants.");   
 }
-
-
-

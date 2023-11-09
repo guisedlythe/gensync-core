@@ -9,6 +9,7 @@
 #ifndef BENCHPARAMS_H
 #define BENCHPARAMS_H
 
+#include "GenSync/Syncs/SyncProtocol.h"
 #include <iostream>
 #include <GenSync/Syncs/GenSync.h>
 #include <GenSync/Benchmarks/DataObjectGenerator.h>
@@ -111,7 +112,7 @@ struct BenchParams {
      *
      * @param fName The name of the parameters file.
      */
-    explicit BenchParams(const string& fName);
+    explicit BenchParams(const string& fName, const SyncProtocolRegistry& syncRegistry);
 
     /**
      * This constructor keeps serverElems and clientElems empty
@@ -121,7 +122,7 @@ struct BenchParams {
 
     friend ostream& operator<<(ostream& os, const BenchParams& bp);
 
-    GenSync::SyncProtocol syncProtocol;
+    std::string syncName = "unknown";
     shared_ptr<Params> syncParams;
     shared_ptr<DataObjectGenerator> AElems;  /** Peer A's elements */
     shared_ptr<DataObjectGenerator> BElems;  /** Peer B's elements */
