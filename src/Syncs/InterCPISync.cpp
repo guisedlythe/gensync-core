@@ -12,6 +12,7 @@
 #include <GenSync/Aux/Exceptions.h>
 #include <GenSync/Syncs/CPISync.h>
 #include <GenSync/Syncs/InterCPISync.h>
+#include <GenSync/Benchmarks/BenchParams.h>
 
 InterCPISync::InterCPISync(long m_bar, long bits, int epsilon, int partition,bool Hashes /* = false*/)
 : maxDiff(m_bar), bitNum(bits), pFactor(partition), hashes(Hashes),
@@ -625,4 +626,26 @@ bool InterCPISync::_SyncClient(const shared_ptr<Communicant> &commSync, list<sha
 		commSync->commClose();
 		throw (s);
 	}
+}
+
+std::shared_ptr<Params> InterCPISync::getParams() const {
+        return std::make_shared<CPISyncParams>(
+            getMaxDiff(), getBitNum(), getProbEps(), getHashes(), getPFactor());
+}
+
+std::shared_ptr<Params>
+InterCPISyncProtocol::readParams(std::istream &is) const {
+        auto par = make_shared<CPISyncParams>();
+        is >> *par;
+        return par;
+}
+
+std::shared_ptr<SyncMethod>
+InterCPISyncProtocol::makeSyncMethod(const SyncParameters &syncParams) const {
+        if (syncParams.mbar.isNullQ())
+                throw std::invalid_argument(
+                    "Must define <mbar> explicitly for InterCPISync.");
+        return std::make_shared<InterCPISync>(
+            syncParams.mbar, syncParams.bits, syncParams.errorProb,
+            syncParams.numParts, syncParams.hashes);
 }

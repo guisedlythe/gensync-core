@@ -74,6 +74,8 @@ set(SOURCE_FILES
         ${SYNC_DIR}/CuckooSync.cpp
         ${SYNC_DIR}/FullSync.cpp
         ${SYNC_DIR}/SyncProtocol.cpp
+        ${SYNC_DIR}/CPISync_HalfRound.cpp
+        ${SYNC_DIR}/IBLTSync_HalfRound.cpp
 
         ${BENCH_DIR}/BenchParams.cpp
         ${BENCH_DIR}/FromFileGen.cpp

@@ -815,7 +815,8 @@ string CPISync::printElem() {
 }
 
 std::shared_ptr<Params> CPISync::getParams() const {
-    return std::make_shared<FullSyncParams>();
+    return std::make_shared<CPISyncParams>(
+        getMaxDiff(), getBits(), getProbEps(), getHashes(), getRedundant());
 }
 
 std::shared_ptr<Params> CPISyncProtocol::readParams(std::istream &is) const {
@@ -827,6 +828,9 @@ std::shared_ptr<Params> CPISyncProtocol::readParams(std::istream &is) const {
 std::shared_ptr<SyncMethod>
 CPISyncProtocol::makeSyncMethod(const SyncParameters &syncParams) const {
     if (syncParams.mbar.isNullQ())
-        throw std::invalid_argument("Must define <mbar> explicitly for CPISync.");
-    return std::make_shared<CPISync>(syncParams.mbar, syncParams.bits, syncParams.errorProb, 0, syncParams.hashes);
+        throw std::invalid_argument(
+            "Must define <mbar> explicitly for CPISync.");
+    return std::make_shared<CPISync>(syncParams.mbar, syncParams.bits,
+                                     syncParams.errorProb, 0,
+                                     syncParams.hashes);
 }

@@ -8,6 +8,7 @@
 #include <GenSync/Syncs/CPISync.h>
 #include <GenSync/Syncs/InterCPISync.h>
 #include <GenSync/Communicants/CommString.h>
+#include "GenSync/Syncs/CPISync_HalfRound.h"
 #include "GenericSyncTests.h"
 #include "TestAuxiliary.h"
 
@@ -184,7 +185,7 @@ void GenSyncTest::testOneWaySync() {
 	//See why connecting to port 0 does not work (should ask os to assign a port for us to use)
 	for(int ii = 0 ; ii < NUM_TESTS; ii++) {
 		GenSync GenSyncServer = GenSync::Builder().
-				setProtocol(GenSync::SyncProtocol::OneWayCPISync).
+				setProtocol(std::make_shared<CPISync_HalfRoundProtocol>()).
 				setComm(GenSync::SyncComm::socket).
 				setBits(eltSize * 8). // Bytes to bits
 				setMbar(mBar).
@@ -193,7 +194,7 @@ void GenSyncTest::testOneWaySync() {
 				build();
 
 		GenSync GenSyncClient = GenSync::Builder().
-				setProtocol(GenSync::SyncProtocol::OneWayCPISync).
+				setProtocol(std::make_shared<CPISync_HalfRoundProtocol>()).
 				setComm(GenSync::SyncComm::socket).
 				setBits(eltSize * 8). // Bytes to bits
 				setMbar(mBar).
@@ -221,7 +222,7 @@ void GenSyncTest::testOneWayProbSync() {
 	//TODO: Error check port opening to make sure port is not already in use
 	for(int ii = 1 ; ii < NUM_TESTS + 1; ii++) {
 		GenSync GenSyncServer = GenSync::Builder().
-				setProtocol(GenSync::SyncProtocol::OneWayIBLTSync).
+				setProtocol(std::make_shared<IBLTSync_HalfRoundProtocol>()).
 				setComm(GenSync::SyncComm::socket).
 				setBits(eltSize).
 				setExpNumElems(numExpElem).
@@ -229,7 +230,7 @@ void GenSyncTest::testOneWayProbSync() {
 				build();
 
 		GenSync GenSyncClient = GenSync::Builder().
-				setProtocol(GenSync::SyncProtocol::OneWayIBLTSync).
+				setProtocol(std::make_shared<IBLTSync_HalfRoundProtocol>()).
 				setComm(GenSync::SyncComm::socket).
 				setBits(eltSize).
 				setExpNumElems(numExpElem).

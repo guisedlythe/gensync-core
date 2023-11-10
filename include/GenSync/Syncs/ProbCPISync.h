@@ -49,8 +49,19 @@ public:
      */
     ProbCPISync(long m_bar, long bits, int epsilon,bool hashes = false);
 
+    std::shared_ptr<Params> getParams() const override;
+
     ~ProbCPISync() override = default;;
 };
 
-#endif	/* PROBCPISYNC_H */
+class ProbCPISyncProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "ProbCPISync"; }
 
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
+};
+
+#endif	/* PROBCPISYNC_H */

@@ -9,6 +9,7 @@
 #include <GenSync/Communicants/Communicant.h>
 #include <GenSync/Data/DataObject.h>
 #include <GenSync/Syncs/CPISync_ExistingConnection.h>
+#include <GenSync/Syncs/SyncProtocol.h>
 
 using std::list;
 
@@ -95,6 +96,8 @@ public:
 
     // update metadata when an element is being deleted (the element is supplied by index)
     bool delElem(shared_ptr<DataObject> newDatum) override;
+
+    std::shared_ptr<Params> getParams() const override;
 
 		/**
 		 * Displays some internal information about this object.
@@ -227,4 +230,15 @@ private:
     
    
 };
+
+class InterCPISyncProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "InterCPISync"; }
+
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
+};
+
 #endif

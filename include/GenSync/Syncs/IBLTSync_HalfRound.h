@@ -22,7 +22,19 @@ public:
         SyncID = SYNC_TYPE::IBLTSync_HalfRound;
     }
 
+    std::shared_ptr<Params> getParams() const override;
+
     string getName() override {return IBLTSync::getName() + "   * one-way\n";}
+};
+
+class IBLTSync_HalfRoundProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "IBLTSync_HalfRound"; }
+
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
 };
 
 #endif //GENSYNCLIB_IBLTSYNC_HALFROUND_H

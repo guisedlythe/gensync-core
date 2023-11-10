@@ -24,8 +24,19 @@ class CPISync_HalfRound: public CPISync {
         	SyncID = SYNC_TYPE::CPISync_HalfRound;
      }
 
+    std::shared_ptr<Params> getParams() const override;
+
     string getName() override {return CPISync::getName() + "   * one-way\n";}
 };
 
-#endif	/* ONEWAYCPISYNC_H */
+class CPISync_HalfRoundProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "CPISync_HalfRound"; }
 
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
+};
+
+#endif	/* ONEWAYCPISYNC_H */

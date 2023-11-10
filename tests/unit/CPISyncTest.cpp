@@ -5,6 +5,8 @@
 #include <GenSync/Syncs/CPISync.h>
 #include "CPISyncTest.h"
 #include <GenSync/Syncs/InterCPISync.h>
+#include <memory>
+#include "GenSync/Syncs/ProbCPISync.h"
 #include "GenSync/Syncs/SyncProtocol.h"
 #include "TestAuxiliary.h"
 
@@ -124,68 +126,68 @@ void CPISyncTest::CPISyncLargeSetReconcileTest() {
 }
 
 void CPISyncTest::ProbCPISyncSetReconcileTest() {
-	// GenSync GenSyncServer = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::ProbCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(mBar).
-	// 		setErr(err).
-	// 		build();
+	GenSync GenSyncServer = GenSync::Builder().
+			setProtocol(std::make_shared<ProbCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(mBar).
+			setErr(err).
+			build();
 
-	// GenSync GenSyncClient = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::ProbCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(mBar).
-	// 		setErr(err).
-	// 		build();
+	GenSync GenSyncClient = GenSync::Builder().
+			setProtocol(std::make_shared<ProbCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(mBar).
+			setErr(err).
+			build();
 
-	// //(oneWay = false, probSync = false, syncParamTest = false, Multiset = false, largeSync = false)
-	// CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false, false, false, false));
+	//(oneWay = false, probSync = false, syncParamTest = false, Multiset = false, largeSync = false)
+	CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false, false, false, false));
 }
 
 void CPISyncTest::ProbCPISyncMultisetReconcileTest() {
-	// GenSync GenSyncServer = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::ProbCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(mBar).
-	// 		setErr(err).
-	// 		setHashes(true).
-	// 		build();
+	GenSync GenSyncServer = GenSync::Builder().
+			setProtocol(std::make_shared<ProbCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(mBar).
+			setErr(err).
+			setHashes(true).
+			build();
 
-	// GenSync GenSyncClient = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::ProbCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(mBar).
-	// 		setErr(err).
-	// 		setHashes(true).
-	// 		build();
+	GenSync GenSyncClient = GenSync::Builder().
+			setProtocol(std::make_shared<ProbCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(mBar).
+			setErr(err).
+			setHashes(true).
+			build();
 
-	// //(oneWay = false, probSync = false, syncParamTest = false, Multiset = true, largeSync = false)
-	// CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false, false, true, false));
+	//(oneWay = false, probSync = false, syncParamTest = false, Multiset = true, largeSync = false)
+	CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false, false, true, false));
 }
 
 void CPISyncTest::ProbCPISyncLargeSetReconcileTest(){
-// 	GenSync GenSyncServer = GenSync::Builder().
-// 			setProtocol(GenSync::SyncProtocol::ProbCPISync).
-// 			setComm(GenSync::SyncComm::socket).
-// 			setBits(eltSize * 8). // Bytes to bits
-// 			setMbar(mBarLarge).
-// 			setErr(err).
-// 			build();
+	GenSync GenSyncServer = GenSync::Builder().
+			setProtocol(std::make_shared<ProbCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(mBarLarge).
+			setErr(err).
+			build();
 
-// 	GenSync GenSyncClient = GenSync::Builder().
-// 			setProtocol(GenSync::SyncProtocol::ProbCPISync).
-// 			setComm(GenSync::SyncComm::socket).
-// 			setBits(eltSize * 8). // Bytes to bits
-// 			setMbar(mBarLarge).
-// 			setErr(err).
-// 			build();
+	GenSync GenSyncClient = GenSync::Builder().
+			setProtocol(std::make_shared<ProbCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(mBarLarge).
+			setErr(err).
+			build();
 
-// 	//(oneWay = false, probSync = false, syncParamTest = false, Multiset = false, largeSync = true)
-// 	CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false,false,false,true));
+	//(oneWay = false, probSync = false, syncParamTest = false, Multiset = false, largeSync = true)
+	CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false,false,false,true));
 }
 
 // InterCPISync Test Cases
@@ -222,82 +224,82 @@ void CPISyncTest::testInterCPIAddDelElem() {
 }
 
 void CPISyncTest::InterCPISyncSetReconcileTest() {
-	// //A small mBar so that InterCPISync is forced to recurse
-	// const int interCPImBar = 15;
+	//A small mBar so that InterCPISync is forced to recurse
+	const int interCPImBar = 15;
 
-	// GenSync GenSyncServer = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::InteractiveCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(interCPImBar).
-	// 		setNumPartitions(numParts).
-	// 		build();
+	GenSync GenSyncServer = GenSync::Builder().
+			setProtocol(std::make_shared<InterCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(interCPImBar).
+			setNumPartitions(numParts).
+			build();
 
-	// GenSync GenSyncClient = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::InteractiveCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(interCPImBar).
-	// 		setNumPartitions(numParts).
-	// 		build();
+	GenSync GenSyncClient = GenSync::Builder().
+			setProtocol(std::make_shared<InterCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(interCPImBar).
+			setNumPartitions(numParts).
+			build();
 
-	// //(oneWay = false, probSync = false, syncParamTest = false, Multiset = false, largeSync = false)
-	// CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false,false, false, false));
+	//(oneWay = false, probSync = false, syncParamTest = false, Multiset = false, largeSync = false)
+	CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false,false, false, false));
 }
 
 void CPISyncTest::InterCPISyncMultisetReconcileTest() {
-	// //A small mBar so that InterCPISync is forced to recurse
-	// const int interCPImBar = 15;
+	//A small mBar so that InterCPISync is forced to recurse
+	const int interCPImBar = 15;
 
-	// GenSync GenSyncServer = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::InteractiveCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(interCPImBar).
-	// 		setNumPartitions(numParts).
-	// 		setErr(err).
-	// 		setHashes(true).
-	// 		build();
+	GenSync GenSyncServer = GenSync::Builder().
+			setProtocol(std::make_shared<InterCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(interCPImBar).
+			setNumPartitions(numParts).
+			setErr(err).
+			setHashes(true).
+			build();
 
-	// GenSync GenSyncClient = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::InteractiveCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(interCPImBar).
-	// 		setNumPartitions(numParts).
-	// 		setErr(err).
-	// 		setHashes(true).
-	// 		build();
+	GenSync GenSyncClient = GenSync::Builder().
+			setProtocol(std::make_shared<InterCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(interCPImBar).
+			setNumPartitions(numParts).
+			setErr(err).
+			setHashes(true).
+			build();
 
-	// //(oneWay = false, probSync = false, syncParamTest = false, Multiset = true, largeSync = false)
-	// CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false, false, true, false));
+	//(oneWay = false, probSync = false, syncParamTest = false, Multiset = true, largeSync = false)
+	CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false, false, true, false));
 }
 
 
 void CPISyncTest::InterCPISyncLargeSetReconcileTest() {
-	// //A small mBar so that InterCPISync is forced to recurse
-	// const int interCPImBar = mBarLarge / 10;
+	//A small mBar so that InterCPISync is forced to recurse
+	const int interCPImBar = mBarLarge / 10;
 
-	// GenSync GenSyncServer = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::InteractiveCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(interCPImBar).
-	// 		setNumPartitions(numParts).
-	// 		setErr(err).
-	// 		setHashes(true).
-	// 		build();
+	GenSync GenSyncServer = GenSync::Builder().
+			setProtocol(std::make_shared<InterCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(interCPImBar).
+			setNumPartitions(numParts).
+			setErr(err).
+			setHashes(true).
+			build();
 
-	// GenSync GenSyncClient = GenSync::Builder().
-	// 		setProtocol(GenSync::SyncProtocol::InteractiveCPISync).
-	// 		setComm(GenSync::SyncComm::socket).
-	// 		setBits(eltSize * 8). // Bytes to bits
-	// 		setMbar(interCPImBar).
-	// 		setNumPartitions(numParts).
-	// 		setErr(err).
-	// 		setHashes(true).
-	// 		build();
+	GenSync GenSyncClient = GenSync::Builder().
+			setProtocol(std::make_shared<InterCPISyncProtocol>()).
+			setComm(GenSync::SyncComm::socket).
+			setBits(eltSize * 8). // Bytes to bits
+			setMbar(interCPImBar).
+			setNumPartitions(numParts).
+			setErr(err).
+			setHashes(true).
+			build();
 
-	// //(oneWay = false, probSync = false, syncParamTest = false, Multiset = false, largeSync = true)
-	// CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false, false, false, true));
+	//(oneWay = false, probSync = false, syncParamTest = false, Multiset = false, largeSync = true)
+	CPPUNIT_ASSERT(syncTest(GenSyncClient, GenSyncServer, false, false, false, false, true));
 }
