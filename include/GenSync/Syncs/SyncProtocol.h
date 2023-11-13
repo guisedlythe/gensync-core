@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 struct Params;
 class SyncMethod;
@@ -43,6 +44,9 @@ class SyncProtocolRegistry {
             return it->second;
         return nullptr;
     }
+
+    static std::vector<std::pair<std::string, std::shared_ptr<SyncProtocol>>>
+    GetDefaultSyncProtocols();
 
   private:
     std::unordered_map<std::string, std::shared_ptr<SyncProtocol>>
