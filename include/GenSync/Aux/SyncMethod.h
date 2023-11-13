@@ -97,7 +97,7 @@ public:
         return before > elements.size(); // true iff there were more elements before removal than after
     };
 
-    virtual std::shared_ptr<Params> getParams() const { return nullptr; }; // TODO: should be pure virtual
+    virtual std::shared_ptr<Params> getParams() const = 0;
 
     virtual void
     postProcess(std::list<std::shared_ptr<DataObject>> otherMinusSelf,
