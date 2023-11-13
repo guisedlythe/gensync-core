@@ -26,9 +26,20 @@ public:
 		hashQ=false;
 		SyncID = SYNC_TYPE::CPISync_OneLessRound;
     }
+
+    std::shared_ptr<Params> getParams() const override;
     
     string getName() override {return CPISync::getName() + "\n   *no hashes";}
 };
 
-#endif	/* CPISYNC_NOHASH_H */
+class CPISync_OneLessRoundProtocol : public SyncProtocol {
+  public:
+    std::string getName() const override { return "CPISync_OneLessRound"; }
 
+    std::shared_ptr<Params> readParams(std::istream &is) const override;
+
+    std::shared_ptr<SyncMethod>
+    makeSyncMethod(const SyncParameters &syncParams) const override;
+};
+
+#endif	/* CPISYNC_NOHASH_H */

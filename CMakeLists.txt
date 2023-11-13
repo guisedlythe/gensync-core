@@ -75,6 +75,7 @@ set(SOURCE_FILES
         ${SYNC_DIR}/FullSync.cpp
         ${SYNC_DIR}/SyncProtocol.cpp
         ${SYNC_DIR}/CPISync_HalfRound.cpp
+        ${SYNC_DIR}/CPISync_OneLessRound.cpp
         ${SYNC_DIR}/IBLTSync_HalfRound.cpp
 
         ${BENCH_DIR}/BenchParams.cpp
