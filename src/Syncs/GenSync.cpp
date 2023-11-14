@@ -478,57 +478,10 @@ GenSync GenSync::Builder::build() {
     }
     theComms.push_back(myComm);
 
-    // const invalid_argument noMbar("Must define <mbar> explicitly for this sync.");
-
     myMeth = proto->makeSyncMethod(syncParameters);
     if(!myMeth) {
         throw invalid_argument("Could not make sync method.");
     }
-
-    // switch (proto)
-    // {
-    //     case SyncProtocol::CPISync:
-    //         if (mbar.isNullQ())
-    //             throw noMbar;
-    //         myMeth = make_shared<CPISync>(mbar, bits, errorProb, 0, hashes);
-    //         break;
-    //     case SyncProtocol::ProbCPISync:
-    //         if (mbar.isNullQ())
-    //             throw noMbar;
-    //         myMeth = make_shared<ProbCPISync>(mbar, bits, errorProb, hashes);
-    //         break;
-    //     case SyncProtocol::InteractiveCPISync:
-    //         if (mbar.isNullQ())
-    //             throw noMbar;
-    //         myMeth = make_shared<InterCPISync>(mbar, bits, errorProb, numParts, hashes);
-    //         break;
-    //     case SyncProtocol::OneWayCPISync:
-    //         if (mbar.isNullQ())
-    //             throw noMbar;
-    //         myMeth = make_shared<CPISync_HalfRound>(mbar, bits, errorProb);
-    //         break;
-    //     case SyncProtocol::FullSync:
-    //         myMeth = make_shared<FullSync>();
-    //         break;
-    //     case SyncProtocol::IBLTSync:
-    //         myMeth = make_shared<IBLTSync>(numExpElem, bits);
-    //         break;
-    //     case SyncProtocol::OneWayIBLTSync:
-    //         myMeth = make_shared<IBLTSync_HalfRound>(numExpElem, bits);
-    //         break;
-    //     case SyncProtocol::IBLTSetOfSets:
-    //         myMeth = make_shared<IBLTSetOfSets>(numExpElem, numElemChldSet, bits);
-    //        _postProcess = IBLTSetOfSets::postProcessing_IBLTSetOfSets;
-    //         break;
-    //     case SyncProtocol::CuckooSync:
-    //         myMeth = make_shared<CuckooSync>(fngprtSize, bucketSize, filterSize, maxKicks);
-    //         break;
-    //     case SyncProtocol::IBLTSync_Multiset:
-    //         myMeth = make_shared<IBLTSync_Multiset>(numExpElem, bits);
-    //         break;
-    //     default:
-    //         throw invalid_argument("I don't know how to synchronize with this protocol.");
-    // }
     theMeths.push_back(myMeth);
 
     if (fileName.isNullQ()) // is data to be drawn from a file?

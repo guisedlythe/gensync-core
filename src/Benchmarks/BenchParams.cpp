@@ -133,36 +133,6 @@ void CuckooParams::apply(GenSync::Builder& gsb) const {
 inline shared_ptr<Params> decideBenchParams(const std::shared_ptr<SyncProtocol>& syncProtocol, ifstream& is) {
     if(!syncProtocol) return nullptr;
     return syncProtocol->readParams(is);
-
-    // if (syncProtocol == GenSync::SyncProtocol::CPISync
-    //     || syncProtocol == GenSync::SyncProtocol::CPISync_OneLessRound
-    //     || syncProtocol == GenSync::SyncProtocol::CPISync_HalfRound
-    //     || syncProtocol == GenSync::SyncProtocol::ProbCPISync
-    //     || syncProtocol == GenSync::SyncProtocol::InteractiveCPISync
-    //     || syncProtocol == GenSync::SyncProtocol::OneWayCPISync) {
-    //     auto par = make_shared<CPISyncParams>();
-    //     is >> *par;
-    //     return par;
-    // } else if (syncProtocol == GenSync::SyncProtocol::IBLTSync
-    //            || syncProtocol == GenSync::SyncProtocol::OneWayIBLTSync
-    //            || syncProtocol == GenSync::SyncProtocol::IBLTSetOfSets
-    //            || syncProtocol == GenSync::SyncProtocol::IBLTSync_Multiset) {
-    //     auto par = make_shared<IBLTParams>();
-    //     is >> *par;
-    //     return par;
-    // } else if (syncProtocol == GenSync::SyncProtocol::CuckooSync) {
-    //     auto par = make_shared<CuckooParams>();
-    //     is >> *par;
-    //     return par;
-    // } else if (syncProtocol == GenSync::SyncProtocol::FullSync) {
-    //     auto par = make_shared<FullSyncParams>();
-    //     is >> *par;
-    //     return par;
-    // } else {
-    //     stringstream ss;
-    //     ss << "There is no viable sync protocol with ID " << static_cast<size_t>(syncProtocol);
-    //     throw runtime_error(ss.str());
-    // }
 }
 
 /**
@@ -220,6 +190,9 @@ BenchParams::BenchParams(const string& fName, const SyncProtocolRegistry& syncRe
         throw runtime_error("There is no sync protocol for " + protocolName);
     }
     syncParams = decideBenchParams(syncProtocol, is);
+    if(!syncParams) {
+        throw runtime_error("Could not get parameters for " + syncProtocol->getName());
+    }
 
     // Expect Sketches here in file. When there, just skip them.
     string line;

@@ -326,28 +326,6 @@ public:
      */
     class Builder;
 
-    // /**
-    //  * Protocols that are implemented for use in data synchronization
-    //  */
-    // enum class SyncProtocol {
-    //     UNDEFINED, // not yet defined
-    //     BEGIN, // beginning of iterable option
-    //     // GenSync and variants
-    //     CPISync= static_cast<int>(BEGIN),
-    //     CPISync_OneLessRound,
-    //     CPISync_HalfRound,
-    //     ProbCPISync,
-    //     InteractiveCPISync,
-    //     OneWayCPISync,
-    //     FullSync,
-    //     IBLTSync,
-    //     OneWayIBLTSync,
-    //     IBLTSetOfSets,
-    //     IBLTSync_Multiset,
-    //     CuckooSync,
-    //     END     // one after the end of iterable options
-    // };
-
     enum class SyncComm {
         UNDEFINED, // not yet defined
         BEGIN, // beginning of iterable option
