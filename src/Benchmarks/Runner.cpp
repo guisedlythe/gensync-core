@@ -223,7 +223,9 @@ int main(int argc, char *argv[]) {
 
     /**************************** Create the peers ****************************/
 
-    BenchParams bPar = BenchParams{paramFile};
+    SyncProtocolRegistry syncRegistry;
+    syncRegistry.registerDefault();
+    BenchParams bPar = BenchParams{paramFile, syncRegistry};
     GenSyncPair genSyncs =
         buildGenSyncs(bPar, mode, !incChunk, generateSets, peerHostname);
 

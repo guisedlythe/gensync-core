@@ -215,9 +215,9 @@ BenchParams::BenchParams(const string& fName, const SyncProtocolRegistry& syncRe
     }
 
     const auto protocolName = getProtocolName(syncRegistry, is);
-    const auto syncProtocol = syncRegistry.getSyncProtocol(protocolName);
+    syncProtocol = syncRegistry.getSyncProtocol(protocolName);
     if(!syncProtocol) {
-        throw runtime_error("There is no viable sync protocol with name " + protocolName);
+        throw runtime_error("There is no sync protocol for " + protocolName);
     }
     syncName = syncProtocol->getName();
     std::cout << "got protocol " << syncName << "\n";
@@ -249,6 +249,8 @@ BenchParams::BenchParams(SyncMethod& meth) :
     sketches (meth.getSketches()),
     syncName(meth.getName()),
     syncParams(meth.getParams()) {
+
+    // TODO: this is only called to write logs and should probably be done differently
 
     if(!syncParams) {
         throw std::runtime_error("Could not get sync parameters");
@@ -338,7 +340,7 @@ BenchParams::BenchParams(SyncMethod& meth) :
 BenchParams::~BenchParams() {}
 
 ostream& operator<<(ostream& os, const BenchParams& bp) {
-    os << "Sync protocol (as in GenSync.h): " << bp.syncName << "\n"
+    os << "Sync protocol (as in GenSync.h): " << (bp.syncProtocol ? bp.syncProtocol->getName() :  bp.syncName) << "\n"
        << *bp.syncParams << "\n"
        << **bp.sketches << "\n"
        << FromFileGen::DELIM_LINE << "\n";

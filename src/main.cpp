@@ -14,11 +14,24 @@
 #include <GenSync/Aux/SyncMethod.h>
 #include <GenSync/Syncs/GenSync.h>
 #include <GenSync/Syncs/CPISync.h>
+#include <GenSync/Syncs/CPISync_HalfRound.h>
+#include <GenSync/Syncs/CPISync_OneLessRound.h>
+#include <GenSync/Syncs/IBLTSync_HalfRound.h>
+#include <GenSync/Syncs/InterCPISync.h>
+#include <GenSync/Syncs/ProbCPISync.h>
+#include <GenSync/Syncs/SyncProtocol.h>
 #include <GenSync/Communicants/CommString.h>
 
 using namespace std;
 
 
+enum class SyncProtocols : int {
+    CPISync,
+    OneWayCPISync,
+    ProbCPISync,
+    InteractiveCPISync,
+    IBLTSync,
+};
 
 // global variables and structs
 static int help_flag = 0; /** Assume no help requested. */
@@ -29,12 +42,7 @@ static const int SERVER = 1; /** I am a server listening for a client. */
 static int comm_flag = CLIENT;
 
 // ... Synchronization mode
-static const int CPISYNC = 0; /** Standard, interactive GenSync. */
-static const int ONEWAY_CPISYNC = 1; /** One-way (non-interactive) GenSync. */
-static const int PROB_CPISYNC = 2; /** Probabilistic GenSync. */
-static const int INTER_CPISYNC = 3; /** Interactive, expected-linear-time/comm CPISYNC. */
-static const int IBLT_CPISYNC = 4; /** IBLT-based sync. */
-static int sync_flag = INTER_CPISYNC; /** Defaults to InterCPISync. */
+static int sync_flag = static_cast<int>(SyncProtocols::InteractiveCPISync); /** Defaults to InterCPISync. */
 static int nohash_flag = 0; /** Defaults to 0 = do not allow hashing. */
 static int int_flag = 0;    /** Defaults to 0 = do *not* parse string data as big Integers. */
 static int numElems = 1;    /** Defaults to 1 = at most 1 element is expected in the data structure. */
@@ -48,11 +56,11 @@ static struct option long_options[] = {
         {"server", no_argument, &comm_flag,   SERVER},
 
         // Sync mode
-        {"cpi", no_argument, &sync_flag,      static_cast<int>(GenSync::SyncProtocol::CPISync)},
-        {"oneway", no_argument, &sync_flag,   static_cast<int>(GenSync::SyncProtocol::OneWayCPISync)},
-        {"prob", no_argument, &sync_flag,     static_cast<int>(GenSync::SyncProtocol::ProbCPISync)},
-        {"inter", no_argument, &sync_flag,    static_cast<int>(GenSync::SyncProtocol::InteractiveCPISync)},
-        {"iblt", no_argument, &sync_flag,     static_cast<int>(GenSync::SyncProtocol::IBLTSync)},
+        {"cpi", no_argument, &sync_flag,      static_cast<int>(SyncProtocols::CPISync)},
+        {"oneway", no_argument, &sync_flag,   static_cast<int>(SyncProtocols::OneWayCPISync)},
+        {"prob", no_argument, &sync_flag,     static_cast<int>(SyncProtocols::ProbCPISync)},
+        {"inter", no_argument, &sync_flag,    static_cast<int>(SyncProtocols::InteractiveCPISync)},
+        {"iblt", no_argument, &sync_flag,     static_cast<int>(SyncProtocols::IBLTSync)},
         {"nohash", no_argument, &nohash_flag, 1}, // if set, then no hashing is done to reduce the element size to a fixed bitlength
         {"integer", no_argument, &int_flag,   1},   // if set, then all set element strings are parsed as arbitrarily-sized Integers
 
@@ -200,25 +208,25 @@ int main(int argc, char *argv[]) {
 
     // 2. Set up the sync
     // .... sync protocol
-    GenSync::SyncProtocol proto;
-    switch (sync_flag) {
-        case CPISYNC:
+    std::shared_ptr<SyncProtocol> proto;
+    switch (static_cast<SyncProtocols>(sync_flag)) {
+        case SyncProtocols::CPISync:
             if (nohash_flag)
-                proto=GenSync::SyncProtocol::CPISync_OneLessRound;
+                proto = std::make_shared<CPISync_OneLessRoundProtocol>();
             else
-                proto=GenSync::SyncProtocol::CPISync;
+                proto = std::make_shared<CPISyncProtocol>();
             break;
-        case ONEWAY_CPISYNC:
-            proto=GenSync::SyncProtocol::CPISync_HalfRound;
+        case SyncProtocols::OneWayCPISync:
+            proto = std::make_shared<CPISync_HalfRoundProtocol>();
             break;
-        case PROB_CPISYNC:
-            proto=GenSync::SyncProtocol::ProbCPISync;
+        case SyncProtocols::ProbCPISync:
+            proto = std::make_shared<ProbCPISyncProtocol>();
             break;
-        case INTER_CPISYNC:
-            proto=GenSync::SyncProtocol::InteractiveCPISync;
+        case SyncProtocols::InteractiveCPISync:
+            proto = std::make_shared<InterCPISyncProtocol>();
             break;
-        case IBLT_CPISYNC:
-            proto=GenSync::SyncProtocol::OneWayIBLTSync;
+        case SyncProtocols::IBLTSync:
+            proto = std::make_shared<IBLTSync_HalfRoundProtocol>();
             break;
         default:
             Logger::error_and_quit("Sync protocol not recognized: "+toStr(sync_flag));
