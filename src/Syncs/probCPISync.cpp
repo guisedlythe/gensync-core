@@ -1,9 +1,9 @@
 /* This code is part of the GenSync project developed at Boston University.  Please see the README for use and references. */
-#include "GenSync/Benchmarks/BenchParams.h"
 #include <NTL/RR.h>
 
 // project libraries
 #include <GenSync/Aux/SyncMethod.h>
+#include <GenSync/Benchmarks/BenchParams.h>
 #include <GenSync/Syncs/CPISync.h>
 #include <GenSync/Syncs/ProbCPISync.h>
 

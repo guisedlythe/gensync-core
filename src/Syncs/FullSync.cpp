@@ -7,8 +7,8 @@
  * Created on June 27, 2018, 9:37 AM
  */
 
-#include "GenSync/Benchmarks/BenchParams.h"
 #include <GenSync/Syncs/FullSync.h>
+#include <GenSync/Benchmarks/BenchParams.h>
 
 FullSync::FullSync() = default;
 

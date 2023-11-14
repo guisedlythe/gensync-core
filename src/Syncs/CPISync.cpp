@@ -1,7 +1,6 @@
 /* This code is part of the GenSync project developed at Boston University.  Please see the README for use and references. */
 
 // standard libraries
-#include "GenSync/Benchmarks/BenchParams.h"
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -15,9 +14,10 @@
 
 // project libraries
 #include <GenSync/Aux/Auxiliary.h>
-#include <GenSync/Aux/SyncMethod.h>
-#include <GenSync/Syncs/CPISync.h>
 #include <GenSync/Aux/Exceptions.h>
+#include <GenSync/Aux/SyncMethod.h>
+#include <GenSync/Benchmarks/BenchParams.h>
+#include <GenSync/Syncs/CPISync.h>
 
 // namespaces
 

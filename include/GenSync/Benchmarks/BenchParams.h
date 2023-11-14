@@ -9,9 +9,9 @@
 #ifndef BENCHPARAMS_H
 #define BENCHPARAMS_H
 
-#include "GenSync/Syncs/SyncProtocol.h"
 #include <iostream>
 #include <GenSync/Syncs/GenSync.h>
+#include <GenSync/Syncs/SyncProtocol.h>
 #include <GenSync/Benchmarks/DataObjectGenerator.h>
 #include <GenSync/Benchmarks/FromFileGen.h>
 #include <GenSync/Aux/Sketches.h>

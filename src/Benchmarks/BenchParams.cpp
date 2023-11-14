@@ -8,17 +8,8 @@
 
 #include <cstdio>
 #include <regex>
-#include <GenSync/Benchmarks/BenchParams.h>
-#include <GenSync/Syncs/ProbCPISync.h>
-#include <GenSync/Syncs/InterCPISync.h>
-#include <GenSync/Syncs/FullSync.h>
-#include <GenSync/Syncs/IBLTSync.h>
-#include <GenSync/Syncs/IBLTSync_HalfRound.h>
-#include <GenSync/Syncs/IBLTSync_Multiset.h>
-#include <GenSync/Syncs/CPISync_HalfRound.h>
-#include <GenSync/Syncs/IBLTSetOfSets.h>
-#include <GenSync/Syncs/CuckooSync.h>
 #include <stdexcept>
+#include <GenSync/Benchmarks/BenchParams.h>
 
 const char BenchParams::KEYVAL_SEP = ':';
 const string BenchParams::FILEPATH_SEP = "/"; // TODO: we currently don't compile for _WIN32!

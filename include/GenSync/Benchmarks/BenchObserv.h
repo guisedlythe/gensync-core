@@ -12,8 +12,8 @@
 #include <vector>
 #include <algorithm>
 #include <GenSync/Aux/Auxiliary.h>
-#include <GenSync/Benchmarks/BenchParams.h>
 #include <GenSync/Aux/SyncMethod.h>
+#include <GenSync/Benchmarks/BenchParams.h>
 
 using namespace std;
 

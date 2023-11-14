@@ -1,23 +1,13 @@
 /* This code is part of the GenSync project developed at Boston University.  Please see the README for use and references. */
 
-#include "GenSync/Aux/SyncMethod.h"
 #include <iostream>
 #include <fstream>
 
+#include <GenSync/Aux/SyncMethod.h>
 #include <GenSync/Syncs/GenSync.h>
 #include <GenSync/Aux/Exceptions.h>
-#include <GenSync/Syncs/CPISync.h>
 #include <GenSync/Communicants/CommSocket.h>
 #include <GenSync/Communicants/CommString.h>
-#include <GenSync/Syncs/ProbCPISync.h>
-#include <GenSync/Syncs/InterCPISync.h>
-#include <GenSync/Syncs/FullSync.h>
-#include <GenSync/Syncs/IBLTSync.h>
-#include <GenSync/Syncs/IBLTSync_HalfRound.h>
-#include <GenSync/Syncs/IBLTSync_Multiset.h>
-#include <GenSync/Syncs/CPISync_HalfRound.h>
-#include <GenSync/Syncs/IBLTSetOfSets.h>
-#include <GenSync/Syncs/CuckooSync.h>
 #include <stdexcept>
 
 #if defined (RECORD)

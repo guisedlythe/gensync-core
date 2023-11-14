@@ -1,5 +1,4 @@
 #include <GenSync/Syncs/SyncProtocol.h>
-
 #include <GenSync/Syncs/CPISync.h>
 #include <GenSync/Syncs/CPISync_HalfRound.h>
 #include <GenSync/Syncs/CPISync_OneLessRound.h>
