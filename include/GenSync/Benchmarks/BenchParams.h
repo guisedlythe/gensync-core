@@ -114,15 +114,6 @@ struct BenchParams {
      */
     explicit BenchParams(const string& fName, const SyncProtocolRegistry& syncRegistry);
 
-    /**
-     * This constructor keeps serverElems and clientElems empty
-     * @param meth The sync method from which to obtain parameters.
-     */
-    explicit BenchParams(SyncMethod& meth);
-
-    friend ostream& operator<<(ostream& os, const BenchParams& bp);
-
-    std::string syncName = "unknown";
     std::shared_ptr<SyncProtocol> syncProtocol = nullptr;
     shared_ptr<Params> syncParams;
     shared_ptr<DataObjectGenerator> AElems;  /** Peer A's elements */

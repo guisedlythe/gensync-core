@@ -283,9 +283,9 @@ void GenSync::writeSyncLog(shared_ptr<Communicant> comm,
     prss << RECORD << "/" << commName << "_" << ns.count() << (dataFile.empty() ? pdSuffix : pSuffix);
     obss << RECORD << "/" << commName << "_" << ns.count() << oSuffix;
 
-    BenchParams params{**mySyncVec.begin()};
     ofstream paramsF(prss.str());
-    paramsF << params;
+    const auto syncMethod = mySyncVec.front();
+    paramsF << BenchObserv{syncMethod};
 
     if (dataFile.empty()) {
         for (auto dob : myData)
@@ -314,8 +314,7 @@ void GenSync::writeSyncLog(shared_ptr<Communicant> comm,
 
     ofstream observF(obss.str());
     string stats = printStats(0);
-    BenchObserv observ{params, stats, success, exception};
-    observF << observ;
+    observF << BenchObserv{syncMethod, stats, success, exception};
 }
 #endif
 
