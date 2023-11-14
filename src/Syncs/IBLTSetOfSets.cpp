@@ -300,7 +300,7 @@ shared_ptr<DataObject> IBLTSetOfSets::reWrite(long index, list<shared_ptr<DataOb
 
 string IBLTSetOfSets::getName()
 {
-    return "IBLTSetOfSets\n   * expected number of elements = " + toStr(expNumElems) + "\n   * size of values =  " + toStr(myIBLT.eltSize()) + "\n   * size of inner values =  " + toStr(elemSize) + "\n";
+    return "IBLTSetOfSets";
 }
 
 std::shared_ptr<Params> IBLTSetOfSets::getParams() const {

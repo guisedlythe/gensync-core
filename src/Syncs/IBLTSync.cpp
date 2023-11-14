@@ -158,7 +158,7 @@ bool IBLTSync::delElem(shared_ptr<DataObject> datum){
     myIBLT.erase(datum->to_ZZ(), datum->to_ZZ());
     return true;
 }
-string IBLTSync::getName(){ return "IBLTSync\n   * expected number of elements = " + toStr(expNumElems) + "\n   * size of values =  " + toStr(myIBLT.eltSize()) + '\n';}
+string IBLTSync::getName(){ return "IBLTSync"; }
 
 std::shared_ptr<Params> IBLTSync::getParams() const {
     return std::make_shared<IBLTParams>(getExpNumElems(), getElementSize());

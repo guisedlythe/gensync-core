@@ -99,13 +99,8 @@ public:
 
     std::shared_ptr<Params> getParams() const override;
 
-		/**
-		 * Displays some internal information about this object.
-		 */
     string getName() override {
-        return string("Interactive GenSync\n   * bitNum = ") + toStr(bitNum)
-                + "\n   * perr (for each GenSync node) = 2^-" + toStr(probEps) + "\n   * mbar = " + toStr(maxDiff)
-                + "\n   * pFactor = " + toStr(pFactor) + "\n   * Evaluation Points = " + toStr(redundant_k) + '\n';
+        return "Interactive CPISync";
     }
 
     /* Getters for the parameters set in the constructor */

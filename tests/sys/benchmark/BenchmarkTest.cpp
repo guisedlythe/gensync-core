@@ -49,7 +49,7 @@ void BenchmarkTest::CPISyncErrorBenchmark()
 }
 void BenchmarkTest::TimedSyncThreshold()
 {
-	const int MAX_TIME = 10; // Test completion threshold (If a test does not complete in this amount of seconds, stop the test and record the size of the previous sync)
+	const int MAX_TIME = 0; // Test completion threshold (If a test does not complete in this amount of seconds, stop the test and record the size of the previous sync)
 	string syncStats;
 	string syncStatsMax;
 	int difs; //Number of elements unique to the server and unique to the client (also the number of elements that are shared between the two sets)

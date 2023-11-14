@@ -28,9 +28,6 @@ struct BenchObserv {
 
     friend ostream& operator<<(ostream& os, const BenchObserv& bo) {
         if(!bo.syncMethod) return os;
-        // Some getName() implementations also write its parameters, which could
-        // lead to the parameters being written twice.
-        // Potential fix would be to make getName() only return the name.
         os << "Sync protocol: " << bo.syncMethod->getName() << "\n";
         if(const auto syncParams = bo.syncMethod->getParams()) {
             os << *syncParams << "\n";

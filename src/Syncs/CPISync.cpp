@@ -95,17 +95,11 @@ CPISync::~CPISync() {
 
 string CPISync::getName() {
     Logger::gLog(Logger::METHOD,"Entering GenSync::getName");
-    string methodName;
     if (!probCPI) {
-        methodName = "Basic CPI Sync";
+        return "Basic CPI Sync";
     } else {
-        methodName = "Probabilistic CPI Sync";
+        return "Probabilistic CPI Sync";
     }
-
-    ostringstream result;
-    result << methodName + "\n   * base field size = " << fieldSize << "\n   * mbar = " << maxDiff << "\n   * b = "
-    << bitNum << "\n   * pErr = 2^-" << probEps << "\n   * Evaluation Points = " << redundant_k << endl;
-    return result.str();
 }
 
 bool CPISync::ratFuncInterp(const vec_ZZ_p& evals, long mA, long mB, vec_ZZ_p& P_vec, vec_ZZ_p& Q_vec) {

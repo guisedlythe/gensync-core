@@ -427,7 +427,10 @@ const double GenSync::getTotalTime(int syncIndex) const {
 string GenSync::printStats(int syncIndex) const{
 	stringstream returnStream;
 
-	returnStream << "Stats for " << mySyncVec[syncIndex]->getName() << endl;
+    const auto syncMethod = mySyncVec.at(syncIndex);
+	returnStream << "Stats for " << syncMethod->getName() << endl;
+    if(const auto syncParams = syncMethod->getParams())
+        returnStream << "Parameters: " << *syncParams << endl;
 	returnStream << "Bytes Transmitted: " << getXmitBytes(syncIndex) << endl;
 	returnStream << "Bytes Received: " << getRecvBytes(syncIndex) << endl;
 	returnStream << "Communication Time(s): " << getCommTime(syncIndex) << endl;

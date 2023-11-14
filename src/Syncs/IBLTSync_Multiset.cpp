@@ -158,8 +158,7 @@ bool IBLTSync_Multiset::delElem(shared_ptr<DataObject> datum){
 }
 
 string IBLTSync_Multiset::getName() {
-    return "IBLTSync_Multiset\n   * expected number of elements = " + toStr(expNumElems) + "\n   * size of values =  " +
-           toStr(myIBLT.eltSize()) + '\n';
+    return "IBLTSync_Multiset";
 }
 
 std::shared_ptr<Params> IBLTSync_Multiset::getParams() const {
