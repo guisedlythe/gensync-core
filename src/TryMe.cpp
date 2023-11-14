@@ -5,11 +5,25 @@
 
 
 #include <iostream>
+#include <GenSync/Syncs/SyncProtocol.h>
 #include <GenSync/Syncs/GenSync.h>
+#include <GenSync/Syncs/CPISync.h>
+#include <GenSync/Syncs/CPISync_HalfRound.h>
+#include <GenSync/Syncs/FullSync.h>
+#include <GenSync/Syncs/IBLTSync.h>
+#include <GenSync/Syncs/IBLTSync_HalfRound.h>
+#include <GenSync/Syncs/InterCPISync.h>
 
 using std::cout;
 using std::endl;
 using std::string;
+
+static constexpr int PORT = 8001; // port on which to connect
+static constexpr int ERR = 8; // inverse log of error chance
+static constexpr int M_BAR = 1; // max differences between server and client
+static constexpr int BITS = CHAR_BIT; // bits per entry
+static constexpr int PARTS = 3; // partitions per level for partition-syncs
+static constexpr int EXP_ELTS = 4; // expected number of elements per set
 
 int main(int argc, char *argv[]) {
     if(strcmp(argv[1], "client")!=0 && strcmp(argv[1], "server")!=0) {
@@ -18,33 +32,29 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
-    GenSync::SyncProtocol prot;
+    std::shared_ptr<SyncProtocol> prot;
     string type = string(argv[2]);
 
+    long bits = BITS * CHAR_BIT;
     // no string switch statements :(
     if(type == "CPISync") {
-        prot = GenSync::SyncProtocol::CPISync;
+        prot = std::make_shared<CPISyncProtocol>();
     } else if (type == "InterCPISync") {
-        prot = GenSync::SyncProtocol::InteractiveCPISync;
+        prot = std::make_shared<InterCPISyncProtocol>();
     } else if (type == "OneWayCPISync") {
-        prot = GenSync::SyncProtocol::OneWayCPISync;
+        prot = std::make_shared<CPISync_HalfRoundProtocol>();
     } else if (type == "FullSync") {
-        prot = GenSync::SyncProtocol::FullSync;
+        prot = std::make_shared<FullSyncProtocol>();
     } else if (type == "IBLTSync") {
-        prot = GenSync::SyncProtocol::IBLTSync;
+        prot = std::make_shared<IBLTSyncProtocol>();
+        bits = BITS;
     } else if (type == "OneWayIBLTSync") {
-        prot = GenSync::SyncProtocol::OneWayIBLTSync;
+        prot = std::make_shared<IBLTSync_HalfRoundProtocol>();
+        bits = BITS;
     } else {
         cout << "invalid sync type!" << endl;
-        exit(1);
+        return 1;
     }
-
-    const int PORT = 8001; // port on which to connect
-    const int ERR = 8; // inverse log of error chance
-    const int M_BAR = 1; // max differences between server and client
-    const int BITS = CHAR_BIT; // bits per entry
-    const int PARTS = 3; // partitions per level for partition-syncs
-    const int EXP_ELTS = 4; // expected number of elements per set
 
     GenSync genSync = GenSync::Builder().
 			setProtocol(prot).
@@ -52,7 +62,7 @@ int main(int argc, char *argv[]) {
 			setPort(PORT).
 			setErr(ERR).
 			setMbar(M_BAR).
-			setBits((prot == GenSync::SyncProtocol::IBLTSync || prot == GenSync::SyncProtocol::OneWayIBLTSync ? BITS : BITS * CHAR_BIT)).
+			setBits(bits).
 			setNumPartitions(PARTS).
 			setExpNumElems(EXP_ELTS).
             build();
